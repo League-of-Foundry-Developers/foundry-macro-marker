@@ -1,0 +1,47 @@
+{
+  "name": "macro-marker",
+  "version": "0.0.1",
+  "description": "Foundry VTT module to show which macro's are in an active state.",
+  "main": "macro-marker.js",
+  "directories": {
+    "test": "spec"
+  },
+  "dependencies": {
+    "foundry-pc-types": "^0.1.0",
+    "hard-source-webpack-plugin": "^0.13.1",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.5.10",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
+    "eslint": "^7.2.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jasmine": "^3.5.0",
+    "jasmine-spec-reporter": "^5.0.2",
+    "ts-node": "^8.10.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-merge": "^4.2.2"
+  },
+  "scripts": {
+    "test": "ts-node node_modules/jasmine/bin/jasmine",
+    "dev": "npx webpack --config webpack.dev.js --progress",
+    "prod": "npx webpack --config webpack.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janssen-io/foundry-macro-marker.git"
+  },
+  "author": "Stan Janssen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/janssen-io/foundry-macro-marker/issues"
+  },
+  "homepage": "https://github.com/janssen-io/foundry-macro-marker#readme"
+}
