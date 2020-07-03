@@ -1,6 +1,7 @@
 import { MarkerFlags, Flaggable } from './flags';
 import { Marker } from './marker';
 import CONSTANTS from './constants';
+import { Settings } from './settings';
 
 export interface MarkerData {
     colour?: string,
@@ -8,8 +9,7 @@ export interface MarkerData {
 }
 
 export class MacroMarker {
-    readonly colour = '#ff0000'; // TODO: read from settings
-    constructor(private user: Flaggable) { }
+    constructor(private settings: Settings, private user: Flaggable) { }
 
     getMarker(macro: Macro & Flaggable, token?: Flaggable): Marker | undefined {
         const flags = token ? [ this.user, token, macro ] : [ this.user, macro ];
@@ -19,22 +19,22 @@ export class MacroMarker {
     }
 
     toggleTokenMacro(macro: Macro, token: Flaggable, colour?: string): Promise<Flaggable> {
-        return this.toggleMacro(macro, new MarkerFlags(token), colour);
+        return this._toggleMacro(macro, new MarkerFlags(token), colour);
     }
 
     toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
-        return this.toggleMacro(macro, new MarkerFlags(user), colour);
+        return this._toggleMacro(macro, new MarkerFlags(user), colour);
     }
 
-    toggleWorldMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
-        return this.toggleMacro(macro, new MarkerFlags(macro), colour);
+    toggleMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
+        return this._toggleMacro(macro, new MarkerFlags(macro), colour);
     }
 
-    private toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
+    private _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
         const marker = existingMarker
             ?  { active: !existingMarker.active, colour: colour || existingMarker.colour }
-            : { active: true, colour: colour || this.colour };
+            : { active: true, colour: colour || this.settings.defaultColour };
 
         return flags.addMarker(macro.id, marker)
             .then(flaggable => {

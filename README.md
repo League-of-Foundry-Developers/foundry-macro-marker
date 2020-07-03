@@ -5,14 +5,29 @@
 
 Using this Foundry VTT module, you can mark macros as active giving them a coloured border.
 
-## Contributing
-Feel free to test out the latest beta using the following manifest link:
+Dimming the inactive macros is configurable in the module settings.
+
+<p align="center">
+<img src="./img/mm-dim.png" />
+</p>
+
+## Usage
+You can toggle the state on three levels:
+
+```js
+// Toggle only for the selected token
+MacroMarker.toggleTokenMacro(macro, token, colour);
+
+// Toggle only for the given user
+MacroMarker.toggleUserMacro(macro, user, colour);  
+
+// Toggle for the specific macro (for every user, independent of the selected token)
+MacroMarker.toggleMacro(macro, colour);
+```` 
+
+Example usage inside a macro:
+```js
+MacroMarker.toggleTokenMacro(this, token, '#f37e44');
+MacroMarker.toggleUserMacro(this, game.user); // default colour can be configured in settings
+MacroMarker.toggleMacro(this, token, 'rgb(255, 243, 88)'); // any CSS colour is valid
 ```
-https://fvtt.janssen.io/macromarker/beta/module.json
-```
-
-___
-
-If you wish to help out with development, then clone the repo and start digging in!  
-Unit tests are much appreciated. :)
-

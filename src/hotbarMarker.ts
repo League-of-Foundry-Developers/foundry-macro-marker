@@ -1,8 +1,9 @@
 import { MacroMarker } from './macroMarker';
 import { Flaggable } from './flags';
+import { Settings } from './settings';
 
 export class HotbarMarker {
-    constructor(private macros: Map<string, Macro>, private marker: MacroMarker) { }
+    constructor(private macros: Map<string, Macro>, private settings: Settings, private marker: MacroMarker) { }
 
     showMarkers(hotbar: HTMLElement, token?: Flaggable): void {
         const macros: NodeListOf<HTMLElement> = hotbar.querySelectorAll('li.macro');
@@ -21,7 +22,7 @@ export class HotbarMarker {
             const img: HTMLElement | undefined = <HTMLElement>slot.querySelector('img.macro-icon');
             const key: HTMLElement | undefined = <HTMLElement>slot.querySelector('span.macro-key');
            
-            if (img) {
+            if (img && this.settings.dimInactive) {
                 img.style['filter'] = marker?.active ? 'brightness(100%)' : 'brightness(65%)';
                 if (key) key.style['z-index'] = img.style['z-index'] + 1;
             }
