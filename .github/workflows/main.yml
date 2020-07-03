@@ -25,7 +25,7 @@ jobs:
       id: transform-manifest
       run: node .github/workflows/transform-manifest.js
     - run: npm install
-    - run: npm test
+    # - run: npm test
     - run: ./build prod
     - name: Create Release
       id: create_release
