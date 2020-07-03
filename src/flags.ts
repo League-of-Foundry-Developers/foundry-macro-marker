@@ -27,4 +27,10 @@ export class MarkerFlags {
     getMarkers(): MarkerCollection {
         return this.flaggable.getFlag(CONSTANTS.module.name, this.key) || {};
     }
+
+    unsetMarker(macroId: string): Promise<Flaggable> {
+        const existingMarkers = this.getMarkers();
+        delete existingMarkers[macroId];
+        return this.setMarkers(existingMarkers);
+    }
 }

@@ -12,27 +12,38 @@ export interface MarkerData {
 export class MacroMarker {
     constructor(private logger: ConsoleLogger, private settings: Settings, private user: Flaggable) { }
 
-    getMarker(macro: Macro & Flaggable, token?: Flaggable): Marker | undefined {
+    getMarker(macro: Macro & Flaggable, token?: Token & Flaggable): Marker | undefined {
         if (!macro) {
             this.logger.error('Get Marker | Macro is undefined.'); 
             return;
         }
 
-        const flags = token ? [ this.user, token, macro ] : [ this.user, macro ];
-        return flags
-            .map(flag => new MarkerFlags(this.logger, flag))
-            .reduce<Marker | undefined>((marker, flag) => marker || flag.getMarkers()[macro.id], undefined);
+        const entity = token?.data.actorLink && token.actor
+            ? token.actor
+            : token;
+
+        const flags = [ macro, this.user ];
+        if (entity) flags.push(entity);
+
+        for(const flag of flags) {
+            const marker = new MarkerFlags(this.logger, flag).getMarkers()[macro.id];
+            if (marker) return marker;
+        }
     }
 
-    toggleTokenMacro(macro: Macro, token: Flaggable, colour?: string): Promise<Flaggable> {
+    async toggleTokenMacro(macro: Macro, token: Token & Flaggable, colour?: string): Promise<Flaggable> {
         if (!macro) this.logger.error('Toggle Token | Macro is undefined.');
         if (!token) this.logger.error('Toggle Token | Token is undefined.');
         if (!token || !macro) return Promise.reject();
 
-        return this._toggleMacro(macro, new MarkerFlags(this.logger, token), colour);
+        const entity: Flaggable = token.data.actorLink && token.actor
+            ? token.actor
+            : token;
+
+        return this._toggleMacro(macro, new MarkerFlags(this.logger, entity), colour);
     }
 
-    toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
+    async toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
         if (!macro) this.logger.error('Toggle User | Macro is undefined.');
         if (!user) this.logger.error('Toggle User | User is undefined.');
         if (!user || !macro) return Promise.reject();
@@ -40,17 +51,33 @@ export class MacroMarker {
         return this._toggleMacro(macro, new MarkerFlags(this.logger, user), colour);
     }
 
-    toggleMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
+    async toggleMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
         if (!macro) {
             this.logger.error('Toggle Macro | Macro is undefined.'); 
             return Promise.reject();
         }
-
+        
         return this._toggleMacro(macro, new MarkerFlags(this.logger, macro), colour);
+    }
+
+    /**
+     * Clear all markers for a given macro from the users and macro itself.
+     * @param macro the macro for which to clear markers
+     */
+    clearMarkers(macro: Macro & Flaggable): Promise<Flaggable[]> {
+        const macroFlags = new MarkerFlags(this.logger, macro);
+        const pMacro = macroFlags.unsetMarker(macro.id);
+
+        const userFlags: MarkerFlags[] = game.users.map(user => new MarkerFlags(this.logger, user));
+        const psUser = userFlags.map(flag => flag.unsetMarker(macro.id));
+
+        return Promise.all([ pMacro, ...psUser ]);
     }
 
     private _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
+        colour = colour?.toString(); // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
+
         const marker = existingMarker
             ?  { active: !existingMarker.active, colour: colour || existingMarker.colour }
             : { active: true, colour: colour || this.settings.defaultColour };

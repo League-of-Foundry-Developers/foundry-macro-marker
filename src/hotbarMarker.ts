@@ -5,7 +5,7 @@ import { Settings } from './settings';
 export class HotbarMarker {
     constructor(private macros: Map<string, Macro>, private settings: Settings, private marker: MacroMarker) { }
 
-    showMarkers(hotbar: HTMLElement, token?: Flaggable): void {
+    showMarkers(hotbar: HTMLElement, token?: Token & Flaggable): void {
         const macros: NodeListOf<HTMLElement> = hotbar.querySelectorAll('li.macro');
 
         for(const slot of [ ...macros ]) {

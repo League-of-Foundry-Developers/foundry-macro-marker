@@ -15,7 +15,7 @@ Hooks.on('init', () => {
         type: Number,
         range: { min: 50, max: 100, step: 5 }
     });
-    
+
     game.settings.register(CONSTANTS.module.name, Settings.keys.defaultColour, {
         name: 'Default colour',
         hint: 'The default colour for active macros. Must be a valid CSS colour (e.g. hex, rgba or named).',
@@ -37,7 +37,7 @@ function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unkno
 }
 
 function renderMarkers(hotbar: HTMLElement) {
-    const token: Flaggable | undefined = canvas.tokens.controlled[0];
+    const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
     const hotbarMarker = new HotbarMarker(
         game.macros, Settings._load(),
         new MacroMarker(new ConsoleLogger(), Settings._load(), game.user));

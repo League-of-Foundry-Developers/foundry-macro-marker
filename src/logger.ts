@@ -1,4 +1,3 @@
-import { Settings } from './settings';
 import CONSTANTS from './constants';
 
 export interface Logger {
@@ -12,23 +11,18 @@ export class ConsoleLogger {
     readonly prefix = `${CONSTANTS.module.title} | `;
 
     error(...message: unknown[]): void {
-        console.error.apply(null, this.addPrefix(message));
+        console.error.apply(null, [ this.prefix, ...message ]);
     }
 
     warn(...message: unknown[]): void {
-        console.warn.apply(null, this.addPrefix(message));
+        console.warn.apply(null, [ this.prefix, ...message ]);
     }
 
     info(...message: unknown[]): void {
-        console.info.apply(null, this.addPrefix(message));
+        console.info.apply(null, [ this.prefix, ...message ]);
     }
 
     debug(...message: unknown[]): void {
-        console.debug.apply(null, this.addPrefix(message));
-    }
-
-    private addPrefix(message: unknown[]) {
-        message.unshift(this.prefix);
-        return message;
+        console.debug.apply(null, [ this.prefix, ...message ]);
     }
 }
