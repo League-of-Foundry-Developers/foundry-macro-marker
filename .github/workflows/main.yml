@@ -37,4 +37,4 @@ jobs:
         prerelease: ${{ endsWith(steps.set-version.outputs.version, 'a') }}
         bodyFile: './PATCH_NOTES.md'
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: './dist/TokenHotbar.zip,./module.json'
+        artifacts: './dist/macro-marker.zip,./module.json'
