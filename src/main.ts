@@ -3,16 +3,19 @@ import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
+import { ConsoleLogger } from './logger';
 
 Hooks.on('init', () => {
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
-        name: 'Dim inactive macros',
-        hint: 'Makes inactive macros on the hotbar less bright.',
+        name: 'Inactive macro brightness',
+        hint: 'Makes inactive macros on the hotbar less bright. Set to 100 to disable the effect.',
         scope: 'world',
         config: true,
-        default: 5,
-        type: Boolean
+        default: 65,
+        type: Number,
+        range: { min: 50, max: 100, step: 5 }
     });
+    
     game.settings.register(CONSTANTS.module.name, Settings.keys.defaultColour, {
         name: 'Default colour',
         hint: 'The default colour for active macros. Must be a valid CSS colour (e.g. hex, rgba or named).',
@@ -23,9 +26,7 @@ Hooks.on('init', () => {
     });
 });
 
-Hooks.on('ready', () => {
-    (<any>window).MacroMarker = new MacroMarker(Settings._load(), game.user);
-});
+Hooks.on('ready', () => (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user));
 
 const timers = {};
 function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unknown[]) {
@@ -37,7 +38,10 @@ function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unkno
 
 function renderMarkers(hotbar: HTMLElement) {
     const token: Flaggable | undefined = canvas.tokens.controlled[0];
-    const hotbarMarker = new HotbarMarker(game.macros, Settings._load(), new MacroMarker(Settings._load(), game.user));
+    const hotbarMarker = new HotbarMarker(
+        game.macros, Settings._load(),
+        new MacroMarker(new ConsoleLogger(), Settings._load(), game.user));
+        
     hotbarMarker.showMarkers(hotbar, token);
 
     return true;

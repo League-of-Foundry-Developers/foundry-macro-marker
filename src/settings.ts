@@ -5,7 +5,7 @@ export interface ClientSettingsReader {
 }
 
 export class Settings {
-    dimInactive: boolean;
+    dimInactive: number;
     defaultColour: string;
 
     static keys = {

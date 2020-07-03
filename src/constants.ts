@@ -1,6 +1,7 @@
 const CONSTANTS = {
     module: {
-        name: 'macro-marker'
+        name: 'macro-marker',
+        title: 'Macro Marker'
     },
     hooks: {
         markerUpdated: 'macro-marker.markedUpdated'

@@ -23,8 +23,9 @@ export class HotbarMarker {
             const key: HTMLElement | undefined = <HTMLElement>slot.querySelector('span.macro-key');
            
             if (img && this.settings.dimInactive) {
-                img.style['filter'] = marker?.active ? 'brightness(100%)' : 'brightness(65%)';
-                if (key) key.style['z-index'] = img.style['z-index'] + 1;
+                img.style['filter'] = marker?.active ? 'brightness(100%)' : `brightness(${this.settings.dimInactive}%)`;
+                slot.style['z-index'] = img.style['z-index'] + 1;
+                if (key) key.style['z-index'] = img.style['z-index'] + 2;
             }
         }
     }
