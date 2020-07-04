@@ -27,7 +27,12 @@ MacroMarker.toggleMacro(macro, colour);
 
 Example usage inside a macro:
 ```js
+// Use either this one:
 MacroMarker.toggleTokenMacro(this, token, '#f37e44');
+
+// or:
 MacroMarker.toggleUserMacro(this, game.user); // default colour can be configured in settings
+
+// or:
 MacroMarker.toggleMacro(this, 'rgb(255, 243, 88)'); // any CSS colour is valid
 ```
