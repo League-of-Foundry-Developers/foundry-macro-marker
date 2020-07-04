@@ -1,15 +1,25 @@
 <h1 align="center">Macro Marker</h1>
 <p align="center">
-<img src="https://github.com/janssen-io/foundry-macro-marker/workflows/MacroMarker%20CI/badge.svg" alt="build status" /> <img src="https://img.shields.io/github/downloads-pre/janssen-io/foundry-macro-marker/v0.3.1/macro-marker.zip?label=v0.3.1" alt="v0.3.1 downloads" />
+<img src="https://github.com/janssen-io/foundry-macro-marker/workflows/MacroMarker%20CI/badge.svg" alt="build status" /> <img src="https://img.shields.io/github/downloads-pre/janssen-io/foundry-macro-marker/v0.4.0/macro-marker.zip?label=v0.4.0" alt="v0.4.0 downloads" />
 </p>
 
-Using this Foundry VTT module, you can mark macros as active giving them a coloured border.
+Using this Foundry VTT module, you can mark macros as active giving them a coloured border and an alternative icon.
 
 Dimming the inactive macros is configurable in the module settings.
 
+### Coloured active macros
 <p align="center">
 <img src="./img/mm-dim.png" />
 </p>
+
+---
+
+### Alternative icon
+<p align="center">
+<img src="./img/mm-alt-icon.gif" />
+</p>
+
+---
 
 ## Usage
 You can toggle the state on three levels:

@@ -2,7 +2,7 @@ import { MarkerFlags, Flaggable } from './flags';
 import { Marker } from './marker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
-import { ConsoleLogger } from './logger';
+import { Logger } from './logger';
 
 export interface MarkerData {
     colour?: string,
@@ -10,7 +10,7 @@ export interface MarkerData {
 }
 
 export class MacroMarker {
-    constructor(private logger: ConsoleLogger, private settings: Settings, private user: Flaggable) { }
+    constructor(private logger: Logger, private settings: Settings, private user: Flaggable) { }
 
     getMarker(macro: Macro & Flaggable, token?: Token & Flaggable): Marker | undefined {
         if (!macro) {
@@ -59,20 +59,12 @@ export class MacroMarker {
         
         return this._toggleMacro(macro, new MarkerFlags(this.logger, macro), colour);
     }
-
-    /**
-     * Clear all markers for a given macro from the users and macro itself.
-     * @param macro the macro for which to clear markers
-     */
-    clearMarkers(macro: Macro & Flaggable): Promise<Flaggable[]> {
-        const macroFlags = new MarkerFlags(this.logger, macro);
-        const pMacro = macroFlags.unsetMarker(macro.id);
-
-        const userFlags: MarkerFlags[] = game.users.map(user => new MarkerFlags(this.logger, user));
-        const psUser = userFlags.map(flag => flag.unsetMarker(macro.id));
-
-        return Promise.all([ pMacro, ...psUser ]);
+    
+    public isActive(macro: Macro, flag: Flaggable): boolean {
+        const markers = new MarkerFlags(this.logger, flag);
+        return markers.getMarkers()[macro.id]?.active || false;
     }
+
 
     private _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];

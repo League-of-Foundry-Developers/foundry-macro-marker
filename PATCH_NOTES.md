@@ -1,10 +1,5 @@
-### Changes
-- Prevent stack overflows when accidentally passing the entity itself instead of a colour.
-- Bind active state to actor in case of linked tokens.
-- Give precedence to markers on the macro itself, then on the user and finally on the token/linked actor.  
-  The idea is that mistakes are easier to fix when made on the macro or user.
-- Added MacroMarker.clearMarkers(macroId) for clearing existing markers on macros and users.
-
+- Added MarkerCleaner class to help cleanup stray markers
+- Added option to set an alternative icon for active macros
 
 ---
 

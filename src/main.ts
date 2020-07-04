@@ -1,9 +1,11 @@
-import { Flaggable } from './flags';
+import { Flaggable, DataFlags } from './flags';
 import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { ConsoleLogger } from './logger';
+import { MacroConfig } from './macroConfig';
+import { MarkerCleaner } from './markerCleaner';
 
 Hooks.on('init', () => {
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
@@ -26,7 +28,10 @@ Hooks.on('init', () => {
     });
 });
 
-Hooks.on('ready', () => (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user));
+Hooks.on('ready', () => {
+    (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user);
+    (<any>window).MarkerCleaner = new MarkerCleaner(new ConsoleLogger());
+});
 
 const timers = {};
 function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unknown[]) {
@@ -59,3 +64,22 @@ Hooks.on('renderHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]))
 Hooks.on('renderCustomHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
 Hooks.on(`${CONSTANTS.hooks.markerUpdated}`, () => delayCallback(renderHotbars));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
+
+Hooks.on('renderMacroConfig', (macroConfig, html) => {
+    const logger = new ConsoleLogger();
+    const dataFlags = new DataFlags(logger, macroConfig.entity);
+    const data = dataFlags.getData();
+    new MacroConfig(logger, html[0]).addFields(data);
+
+    return true;
+});
+
+Hooks.on('preUpdateMacro', (macro, data) => {
+    const activeData = data[CONSTANTS.module.name];
+    if (!activeData)
+        return;
+
+    new DataFlags(new ConsoleLogger(), macro).setData(activeData);
+
+    return true;
+});

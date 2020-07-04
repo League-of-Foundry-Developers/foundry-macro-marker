@@ -1,6 +1,7 @@
 import CONSTANTS from './constants';
 import { Marker, MarkerCollection } from './marker';
-import { ConsoleLogger } from './logger';
+import { Logger } from './logger';
+import { ActiveData } from './macroConfig';
 
 export interface Flaggable {
     setFlag<T>(scope: string, key: string, value: T) : Promise<Flaggable>;
@@ -10,7 +11,7 @@ export interface Flaggable {
 
 export class MarkerFlags {
     private key = 'activeMacros';
-    constructor(private logger: ConsoleLogger, private flaggable: Flaggable) { }
+    constructor(private logger: Logger, private flaggable: Flaggable) { }
 
     addMarker(macroId: string, marker: Marker): Promise<Flaggable> {
         const existingMarkers = this.getMarkers();
@@ -32,5 +33,19 @@ export class MarkerFlags {
         const existingMarkers = this.getMarkers();
         delete existingMarkers[macroId];
         return this.setMarkers(existingMarkers);
+    }
+}
+
+export class DataFlags {
+    private key = 'activeData';
+    constructor(private logger: Logger, private flaggable: Flaggable) { }
+
+    getData(): ActiveData {
+        return this.flaggable.getFlag(CONSTANTS.module.name, this.key) || {};
+    }
+
+    setData(data: ActiveData): Promise<Flaggable> {
+        return this.flaggable.unsetFlag(CONSTANTS.module.name, this.key)
+            .then(entity => entity.setFlag(CONSTANTS.module.name, this.key, data));
     }
 }
