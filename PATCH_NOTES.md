@@ -1,5 +1,5 @@
-- Added MarkerCleaner class to help cleanup stray markers
-- Added option to set an alternative icon for active macros
+- Clear stray markers when setting a marker.
+- Add alternative tooltip for active macro
 
 ---
 

@@ -7,6 +7,10 @@ import { ConsoleLogger } from './logger';
 import { MacroConfig } from './macroConfig';
 import { MarkerCleaner } from './markerCleaner';
 
+declare class Hotbar {
+    _onHoverMacro(event: Event, ...args: any[]): void;
+}
+
 Hooks.on('init', () => {
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
         name: 'Inactive macro brightness',
@@ -26,10 +30,25 @@ Hooks.on('init', () => {
         default: 'white',
         type: String
     });
+
+    CONFIG.ui.hotbar =
+        class extends Hotbar {
+            _onHoverMacro(event, ...args) {
+                super._onHoverMacro(event, ...args);
+                if (event.type !== 'mouseenter')
+                    return;
+
+                const li: HTMLElement = event.currentTarget;
+                const logger = new ConsoleLogger();
+                const settings = Settings._load();
+                const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
+                new HotbarMarker(game.macros, logger, settings, marker).showTooltip(li, canvas.tokens.controlled[0]);
+            }
+        };
 });
 
 Hooks.on('ready', () => {
-    (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user);
+    (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user, () => canvas.tokens.controlled);
     (<any>window).MarkerCleaner = new MarkerCleaner(new ConsoleLogger());
 });
 
@@ -42,10 +61,14 @@ function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unkno
 }
 
 function renderMarkers(hotbar: HTMLElement) {
+    const logger = new ConsoleLogger();
+    const settings = Settings._load();
     const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
     const hotbarMarker = new HotbarMarker(
-        game.macros, Settings._load(),
-        new MacroMarker(new ConsoleLogger(), Settings._load(), game.user));
+        game.macros,
+        logger,
+        settings,
+        new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled));
         
     hotbarMarker.showMarkers(hotbar, token);
 

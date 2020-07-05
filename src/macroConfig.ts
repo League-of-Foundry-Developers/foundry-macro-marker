@@ -15,10 +15,10 @@ export class MacroConfig {
         const container = document.createElement('div');
         container.classList.add('macro-marker');
 
-        // const tooltip = this.createTooltipField(data.tooltip);
+        const tooltip = this.createTooltipField(data.tooltip);
         const icon = this.createIconField(data.icon);
 
-        // container.appendChild(tooltip);
+        container.appendChild(tooltip);
         container.appendChild(icon);
         this.insertBefore(container, command);
 
@@ -37,11 +37,11 @@ export class MacroConfig {
         const icon = <HTMLInputElement>container.querySelector('input[name="macro-marker.icon"]');
 
         const result = {};
-        if (tooltip && tooltip.value)
-            result['tooltip'] = tooltip.value;
+        if (tooltip?.value?.trim())
+            result['tooltip'] = tooltip.value.trim();
 
-        if (icon && icon.value)
-            result['icon'] = icon.value;
+        if (icon?.value?.trim())
+            result['icon'] = icon.value.trim();
 
         return result;
     }

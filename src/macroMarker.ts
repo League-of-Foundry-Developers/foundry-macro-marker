@@ -3,6 +3,7 @@ import { Marker } from './marker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { Logger } from './logger';
+import { MarkerCleaner } from './markerCleaner';
 
 export interface MarkerData {
     colour?: string,
@@ -10,7 +11,11 @@ export interface MarkerData {
 }
 
 export class MacroMarker {
-    constructor(private logger: Logger, private settings: Settings, private user: Flaggable) { }
+    constructor(
+        private logger: Logger,
+        private settings: Settings,
+        private user: Flaggable,
+        private listControlledTokens: () => (Token & Flaggable)[]) { }
 
     getMarker(macro: Macro & Flaggable, token?: Token & Flaggable): Marker | undefined {
         if (!macro) {
@@ -36,6 +41,10 @@ export class MacroMarker {
         if (!token) this.logger.error('Toggle Token | Token is undefined.');
         if (!token || !macro) return Promise.reject();
 
+        const cleaner = new MarkerCleaner(this.logger);
+        cleaner.clearUserMarkers(macro, this.user);
+        cleaner.clearMarkers(macro);
+
         const entity: Flaggable = token.data.actorLink && token.actor
             ? token.actor
             : token;
@@ -48,6 +57,13 @@ export class MacroMarker {
         if (!user) this.logger.error('Toggle User | User is undefined.');
         if (!user || !macro) return Promise.reject();
 
+        const cleaner = new MarkerCleaner(this.logger);
+        const token = this.listControlledTokens()[0];
+        if (token)
+            cleaner.clearTokenMarkers(macro, token);
+
+        cleaner.clearMarkers(macro);
+
         return this._toggleMacro(macro, new MarkerFlags(this.logger, user), colour);
     }
 
@@ -56,6 +72,13 @@ export class MacroMarker {
             this.logger.error('Toggle Macro | Macro is undefined.'); 
             return Promise.reject();
         }
+
+        const cleaner = new MarkerCleaner(this.logger);
+        const token = this.listControlledTokens()[0];
+        if (token)
+            cleaner.clearTokenMarkers(macro, token);
+
+        cleaner.clearUserMarkers(macro, this.user);
         
         return this._toggleMacro(macro, new MarkerFlags(this.logger, macro), colour);
     }
