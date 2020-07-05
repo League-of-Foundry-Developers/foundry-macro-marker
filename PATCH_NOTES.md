@@ -1,5 +1,4 @@
-- Added (optional) animation.
-- Fixed default colour being stored and therefore not changing when setting was changed.
+- Add css to zip
 
 ---
 
