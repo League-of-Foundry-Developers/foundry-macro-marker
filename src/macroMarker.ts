@@ -5,11 +5,6 @@ import { Settings } from './settings';
 import { Logger } from './logger';
 import { MarkerCleaner } from './markerCleaner';
 
-export interface MarkerData {
-    colour?: string,
-    on?: (token: Token) => boolean
-}
-
 export class MacroMarker {
     constructor(
         private logger: Logger,
@@ -93,9 +88,11 @@ export class MacroMarker {
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
         colour = colour?.toString(); // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
 
+        colour = colour || existingMarker?.colour;
+
         const marker = existingMarker
-            ?  { active: !existingMarker.active, colour: colour || existingMarker.colour }
-            : { active: true, colour: colour || this.settings.defaultColour };
+            ? { active: !existingMarker.active, colour: colour }
+            : { active: true, colour: colour };
 
         return flags.addMarker(macro.id, marker)
             .then(flaggable => {

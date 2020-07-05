@@ -31,6 +31,26 @@ Hooks.on('init', () => {
         type: String
     });
 
+    game.settings.register(CONSTANTS.module.name, Settings.keys.borderWidth, {
+        name: 'Border width',
+        hint: 'The width for the active macro border.',
+        scope: 'world',
+        config: true,
+        default: 2,
+        type: Number,
+        range: { min: 1, max: 4, step: 1 }
+    });
+
+    game.settings.register(CONSTANTS.module.name, Settings.keys.animationSpeed, {
+        name: 'Animation speed',
+        hint: 'The number of second it takes to complete a single animation. Use 0 to turn off animations.',
+        scope: 'client',
+        config: true,
+        default: 3,
+        type: Number,
+        range: { min: 0, max: 10, step: 0.5 }
+    });
+
     CONFIG.ui.hotbar =
         class extends Hotbar {
             _onHoverMacro(event, ...args) {

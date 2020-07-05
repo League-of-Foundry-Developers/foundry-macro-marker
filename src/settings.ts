@@ -5,17 +5,23 @@ export interface ClientSettingsReader {
 }
 
 export class Settings {
-    dimInactive: number;
+    animationSpeed: number;
+    borderWidth: number;
     defaultColour: string;
-
+    dimInactive: number;
+    
     static keys = {
-        dimInactiveMacros: 'dimInactive',
-        defaultColour: 'defaultColour'
+        animationSpeed: 'animationSpeed',
+        borderWidth: 'borderWidth',
+        defaultColour: 'defaultColour',
+        dimInactiveMacros: 'dimInactive'
     }
 
     public load(s: ClientSettingsReader) : Settings {
-        this.dimInactive = this.getSetting(s, Settings.keys.dimInactiveMacros);
+        this.animationSpeed = this.getSetting(s, Settings.keys.animationSpeed);
+        this.borderWidth = this.getSetting(s, Settings.keys.borderWidth);
         this.defaultColour = this.getSetting(s, Settings.keys.defaultColour);
+        this.dimInactive = this.getSetting(s, Settings.keys.dimInactiveMacros);
 
         return this;
     }

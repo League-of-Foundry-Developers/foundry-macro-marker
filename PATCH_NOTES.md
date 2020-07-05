@@ -1,5 +1,5 @@
-- Clear stray markers when setting a marker.
-- Add alternative tooltip for active macro
+- Added (optional) animation.
+- Fixed default colour being stored and therefore not changing when setting was changed.
 
 ---
 

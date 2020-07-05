@@ -9,6 +9,7 @@ export class HotbarMarker {
 
     showMarkers(hotbar: HTMLElement, token?: Token & Flaggable): void {
         const macros: NodeListOf<HTMLElement> = hotbar.querySelectorAll('li.macro');
+        this.setVariables();
 
         for(const slot of [ ...macros ]) {
             const macroId = slot.getAttribute('data-macro-id');
@@ -17,9 +18,14 @@ export class HotbarMarker {
                 continue;
 
             const marker = this.marker.getMarker(macro, token);
-            slot.style['border'] = marker?.active
-                ? `1px solid ${marker.colour}`
-                : '1px solid black';
+
+            if (marker?.active) {
+                slot.classList.add('macro-marker');
+                slot.style.setProperty('color', marker?.colour ? marker.colour : 'var(--macro-marker-color)');
+            } else {
+                slot.classList.remove('macro-marker');
+                slot.style.setProperty('color', 'black'); //set color back to default just to be sure
+            }
 
             const img = <HTMLImageElement>slot.querySelector('img.macro-icon');
             const key = <HTMLElement>slot.querySelector('span.macro-key');
@@ -60,6 +66,12 @@ export class HotbarMarker {
 
         // We have to search the document for the tooltip, because it doesn't exist on event.target yet
         const tooltip = <HTMLElement>document.querySelector(`.macro.active[data-macro-id="${macroId}"] .tooltip`);
-        tooltip.innerText = dataFlags.getData().tooltip ?? macro.name;
+        tooltip.innerText = dataFlags.getData().tooltip || macro.name;
+    }
+
+    setVariables(): void {
+        document.documentElement.style.setProperty('--macro-marker-width', this.settings.borderWidth + 'px');
+        document.documentElement.style.setProperty('--macro-marker-speed', this.settings.animationSpeed + 's');
+        document.documentElement.style.setProperty('--macro-marker-color', this.settings.defaultColour);
     }
 }

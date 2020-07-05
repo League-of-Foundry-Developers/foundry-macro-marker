@@ -1,0 +1,42 @@
+:root {
+  --macro-marker-width: 2px;
+  --macro-marker-speed: 4s;
+  --macro-marker-color: red;
+
+  --macro-marker-clip: calc(48px - var(--macro-marker-width));
+}
+
+li.macro.macro-marker {
+  color: var(--macro-marker-color);
+}
+
+li.macro.macro-marker::after {
+  content: '';
+  box-shadow: inset 0 0 0 var(--macro-marker-width) ;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  animation: snake var(--macro-marker-speed) linear infinite;
+}
+
+li.macro.macro-marker::before {
+  content: '';
+  box-shadow: inset 0 0 0 var(--macro-marker-width);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  animation: snake var(--macro-marker-speed) linear infinite;
+  animation-delay: calc(-0.5 * var(--macro-marker-speed));
+  z-index: 1;
+}
+
+@keyframes snake {
+  0%, 100% {clip: rect(0px, 48px, var(--macro-marker-width), 0px); }
+  25% {clip: rect(0px, var(--macro-marker-width), 48px, 0px); }
+  50% {clip: rect(var(--macro-marker-clip), 48px, 48px, 0px); }
+  75% {clip: rect(0px, 48px, 48px, var(--macro-marker-clip)); }
+}
