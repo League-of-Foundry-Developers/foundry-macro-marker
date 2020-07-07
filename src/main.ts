@@ -19,7 +19,8 @@ Hooks.on('init', () => {
         config: true,
         default: 65,
         type: Number,
-        range: { min: 50, max: 100, step: 5 }
+        range: { min: 50, max: 100, step: 5 },
+        onChange: renderHotbars
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.defaultColour, {
@@ -28,7 +29,8 @@ Hooks.on('init', () => {
         scope: 'world',
         config: true,
         default: 'white',
-        type: String
+        type: String,
+        onChange: renderHotbars
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.borderWidth, {
@@ -38,7 +40,8 @@ Hooks.on('init', () => {
         config: true,
         default: 2,
         type: Number,
-        range: { min: 1, max: 4, step: 1 }
+        range: { min: 1, max: 4, step: 1 },
+        onChange: renderHotbars
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.animationSpeed, {
@@ -48,7 +51,8 @@ Hooks.on('init', () => {
         config: true,
         default: 3,
         type: Number,
-        range: { min: 0, max: 10, step: 0.5 }
+        range: { min: 0, max: 10, step: 0.5 },
+        onChange: renderHotbars
     });
 
     CONFIG.ui.hotbar =
