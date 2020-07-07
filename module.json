@@ -5,7 +5,7 @@
     "author": "Stan Janssen",
     "version": "{{ version }}",
     "minimumCoreVersion": "0.6.0",
-    "compatibleCoreVersion":"0.6.4",
+    "compatibleCoreVersion":"0.6.5",
     "scripts": ["macro-marker.js"],
     "styles": ["css/macro-border.css"],
     "manifest": "https://fvtt.janssen.io/macro-marker/{{ channel }}/module.json",
