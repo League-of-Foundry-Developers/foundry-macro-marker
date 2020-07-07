@@ -68,8 +68,9 @@ Hooks.on('init', () => {
 });
 
 Hooks.on('ready', () => {
-    (<any>window).MacroMarker = new MacroMarker(new ConsoleLogger(), Settings._load(), game.user, () => canvas.tokens.controlled);
-    (<any>window).MarkerCleaner = new MarkerCleaner(new ConsoleLogger());
+    const logger = new ConsoleLogger();
+    window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
+    window['MarkerCleaner'] = new MarkerCleaner(logger);
 });
 
 const timers = {};
@@ -122,7 +123,9 @@ Hooks.on('preUpdateMacro', (macro, data) => {
     if (!activeData)
         return;
 
-    new DataFlags(new ConsoleLogger(), macro).setData(activeData);
+    const flags = new DataFlags(new ConsoleLogger(), macro);
+    const oldData = flags.getData();
+    flags.setData(Object.assign(oldData, activeData));
 
     return true;
 });
