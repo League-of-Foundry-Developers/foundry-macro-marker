@@ -1,7 +1,7 @@
 import CONSTANTS from './constants';
 import { Marker, MarkerCollection } from './marker';
 import { Logger } from './logger';
-import { ActiveData } from './macroConfig';
+import { ActiveData } from './macroMarkerConfig';
 
 export interface Flaggable {
     setFlag<T>(scope: string, key: string, value: T) : Promise<Flaggable>;

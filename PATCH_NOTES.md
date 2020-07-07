@@ -1,7 +1,6 @@
-- Add css to zip
+- Move active tooltip and active icon to separate tab
+- Add character sheet trigger for linked tokens
 
 ---
 
-### Known issues
-The examples won't work with The Furnace. `this` no longer references the macro itself when using that module.  
-*The maintainer is aware of the issue and a fix is underway.*
+The issue with The Furnace has been fixed! 🥳

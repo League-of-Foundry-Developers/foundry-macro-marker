@@ -2,5 +2,5 @@ cd `git rev-parse --show-toplevel`
 if [ ! -z "$1" ]; then
     npm run-script $1
 fi
-zip -r ./dist/macro-marker.zip module.json macro-marker.js lang/ css/
+zip -r ./dist/macro-marker.zip module.json macro-marker.js lang/ css/ templates/
 

@@ -8,7 +8,13 @@ import { MarkerCleaner } from './markerCleaner';
 interface ToggleData {
     token?: Token & Flaggable,
     user?: Flaggable,
+    entity?: (Token | User) & Flaggable, 
     colour?: string
+}
+
+interface ExecutionContext {
+    token?: Token,
+    actor?: Actor
 }
 
 export class MacroMarker {
@@ -84,14 +90,17 @@ export class MacroMarker {
         return this._toggleMacro(macro, new MarkerFlags(this.logger, macro), colour);
     }
     
-    public isActive(macro: Macro & Flaggable, data?: { token?: Token & Flaggable, user?: Flaggable }): boolean {
+    public isActive(macro: Macro & Flaggable, data?: ToggleData): boolean {
         let entity: Flaggable = macro;
-        if (data?.token)
-            entity = data.token.data.actorLink && data.token.actor
-                ? data.token.actor
-                : data.token;
-        else if (data?.user)
-            entity = data.user;
+        const type = data?.entity?.constructor.name;
+        if (data?.token || type === Token.constructor.name) {
+            const token = data?.token ?? <Token>data?.entity;
+            entity = token?.data.actorLink && token.actor
+                ? token.actor
+                : token;
+        } else if (data && (data.user || (data.entity && type === User.constructor.name))) {
+            entity = data.user ?? data.entity!;
+        }
 
         const markers = new MarkerFlags(this.logger, entity);
         return markers.getMarkers()[macro.id]?.active || false;
@@ -103,10 +112,12 @@ export class MacroMarker {
             Promise.reject();
         }
 
-        if (data?.token)
-            return this.toggleTokenMacro(macro, data.token, data.colour);
-        else if(data?.user)
-            return this.toggleUserMacro(macro, data.user, data.colour);
+        const type = data?.entity?.constructor.name;
+
+        if (data?.token || type === Token.constructor.name)
+            return this.toggleTokenMacro(macro, data?.token ?? <Token>data?.entity, data?.colour);
+        else if(data?.user || type === Macro.constructor.name)
+            return this.toggleUserMacro(macro, data?.user ?? <User>data?.entity, data?.colour);
         else
             return this.toggleMacro(macro, data?.colour);
     }
