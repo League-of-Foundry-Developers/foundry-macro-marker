@@ -73,9 +73,9 @@ Hooks.on('init', () => {
 
 Hooks.on('ready', () => {
     const logger = new ConsoleLogger();
-    (<any>window).MacroMarker = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
-    (<any>window).MarkerCleaner = new MarkerCleaner(logger);
-
+    window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
+    window['MarkerCleaner'] = new MarkerCleaner(logger);
+    
     MacroMarkerConfig.init();
 });
 
