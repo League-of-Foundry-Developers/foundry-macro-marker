@@ -1,7 +1,3 @@
-- Fixed bug where only new changes to marker config override previous config
-- Render hotbars when changing settings
+- Added rounded borders like the hotbar icons have.
+- Bug fix: update markers using GM account to prevent errors on Observer-only macros.
 
----
-
-### Known issues
-The compatability issue with The Furnace has been fixed! 🥳

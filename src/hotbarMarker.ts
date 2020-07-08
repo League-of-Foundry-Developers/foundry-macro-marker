@@ -9,7 +9,7 @@ export class HotbarMarker {
 
     showMarkers(hotbar: HTMLElement, token?: Token & Flaggable): void {
         const macros: NodeListOf<HTMLElement> = hotbar.querySelectorAll('li.macro');
-        this.setVariables();
+        this.setCssVariables();
 
         for(const slot of [ ...macros ]) {
             const macroId = slot.getAttribute('data-macro-id');
@@ -69,7 +69,7 @@ export class HotbarMarker {
         tooltip.innerText = dataFlags.getData().tooltip || macro.name;
     }
 
-    setVariables(): void {
+    setCssVariables(): void {
         document.documentElement.style.setProperty('--macro-marker-width', this.settings.borderWidth + 'px');
         document.documentElement.style.setProperty('--macro-marker-speed', this.settings.animationSpeed + 's');
         document.documentElement.style.setProperty('--macro-marker-color', this.settings.defaultColour);

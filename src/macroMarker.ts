@@ -4,6 +4,7 @@ import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { Logger } from './logger';
 import { MarkerCleaner } from './markerCleaner';
+import { RemoteExecutor } from './remoteExecutor';
 
 interface ToggleData {
     token?: Token & Flaggable,
@@ -125,20 +126,30 @@ export class MacroMarker {
         return this.toggle(macro, data);
     }
 
-    private _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
+    private async _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
-        colour = colour?.toString(); // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
 
-        colour = colour || existingMarker?.colour;
+        // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
+        colour = colour?.toString() || existingMarker?.colour;
 
         const marker = existingMarker
-            ? { active: !existingMarker.active, colour: colour }
-            : { active: true, colour: colour };
+            ? { active: !existingMarker.active, colour }
+            : { active: true, colour };
 
-        return flags.addMarker(macro.id, marker)
-            .then(flaggable => {
+        // TODO: inject
+        if (game.user.isGM)
+            return flags.addMarker(macro.id, marker)
+                .then(flaggable => {
+                    Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
+                    return flaggable;
+                });
+
+        const gm = RemoteExecutor.create(this.logger);
+        return gm.updateMarker(macro.id, marker, flags.flaggable)
+            .then(() => {
+                this.logger.debug('Remote execution completed.');
                 Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
-                return flaggable;
+                return flags.flaggable;
             });
     }
 }

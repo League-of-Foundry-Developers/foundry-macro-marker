@@ -2,16 +2,21 @@ import CONSTANTS from './constants';
 import { Marker, MarkerCollection } from './marker';
 import { Logger } from './logger';
 import { ActiveData } from './macroConfig';
+import { MarkerTypes } from './remoteExecutor';
 
 export interface Flaggable {
+    id: string;
+    markerType: MarkerTypes,
     setFlag<T>(scope: string, key: string, value: T) : Promise<Flaggable>;
     unsetFlag(scope: string, key: string) : Promise<Flaggable>;
     getFlag<T>(scope: string, key: string) : T | undefined;
+    
 }
 
 export class MarkerFlags {
-    private key = 'activeMacros';
-    constructor(private logger: Logger, private flaggable: Flaggable) { }
+    private readonly key = 'activeMacros';
+    // TODO: make flaggable private again after refactoring MacroMarker
+    constructor(private logger: Logger, public flaggable: Flaggable) { }
 
     addMarker(macroId: string, marker: Marker): Promise<Flaggable> {
         const existingMarkers = this.getMarkers();

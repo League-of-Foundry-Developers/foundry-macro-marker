@@ -12,5 +12,6 @@
     "download": "https://fvtt.janssen.io/macro-marker/{{ channel }}/macro-marker.zip",
     "url": "https://github.com/janssen-io/foundry-macro-marker",
     "bugs": "https://github.com/janssen-io/foundry-macro-marker/issues",
-    "languages": [ ]
+    "languages": [ ],
+    "socket": true
 }

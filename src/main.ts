@@ -3,15 +3,18 @@ import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
-import { ConsoleLogger } from './logger';
+import { ConsoleLogger, NotifiedLogger } from './logger';
 import { MacroConfig } from './macroConfig';
 import { MarkerCleaner } from './markerCleaner';
+import { RemoteExecutor } from './remoteExecutor';
+import { Extensions } from './foundry';
 
 declare class Hotbar {
     _onHoverMacro(event: Event, ...args: any[]): void;
 }
 
 Hooks.on('init', () => {
+    Extensions.addEntityMarkerTypes();
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
         name: 'Inactive macro brightness',
         hint: 'Makes inactive macros on the hotbar less bright. Set to 100 to disable the effect.',
@@ -63,7 +66,7 @@ Hooks.on('init', () => {
                     return;
 
                 const li: HTMLElement = event.currentTarget;
-                const logger = new ConsoleLogger();
+                const logger = new NotifiedLogger(new ConsoleLogger());
                 const settings = Settings._load();
                 const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
                 new HotbarMarker(game.macros, logger, settings, marker).showTooltip(li, canvas.tokens.controlled[0]);
@@ -72,7 +75,8 @@ Hooks.on('init', () => {
 });
 
 Hooks.on('ready', () => {
-    const logger = new ConsoleLogger();
+    const logger = new NotifiedLogger(new ConsoleLogger());
+    RemoteExecutor.init(logger);
     window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
     window['MarkerCleaner'] = new MarkerCleaner(logger);
 });
@@ -86,7 +90,7 @@ function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unkno
 }
 
 function renderMarkers(hotbar: HTMLElement) {
-    const logger = new ConsoleLogger();
+    const logger = new NotifiedLogger(new ConsoleLogger());
     const settings = Settings._load();
     const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
     const hotbarMarker = new HotbarMarker(
@@ -127,7 +131,8 @@ Hooks.on('preUpdateMacro', (macro, data) => {
     if (!activeData)
         return;
 
-    const flags = new DataFlags(new ConsoleLogger(), macro);
+    const logger = new NotifiedLogger(new ConsoleLogger());
+    const flags = new DataFlags(logger, macro);
     const oldData = flags.getData();
     flags.setData(Object.assign(oldData, activeData));
 
