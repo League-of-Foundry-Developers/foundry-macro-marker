@@ -7,8 +7,15 @@ import { MarkerCleaner } from './markerCleaner';
 import { RemoteExecutor } from './remoteExecutor';
 
 interface ToggleData {
+    /**
+     * @deprecated use ToggleData.entity instead
+     */
     token?: Token & Flaggable,
+    /**
+     * @deprecated use ToggleData.entity instead
+     */
     user?: Flaggable,
+    entity?: Flaggable,
     colour?: string
 }
 
@@ -38,51 +45,28 @@ export class MacroMarker {
         }
     }
 
+    /**
+     * @deprecated use MacroMarer.toggle instead
+     */
     async toggleTokenMacro(macro: Macro, token: Token & Flaggable, colour?: string): Promise<Flaggable> {
-        if (!macro) this.logger.error('Toggle Token | Macro is undefined.');
-        if (!token) this.logger.error('Toggle Token | Token is undefined.');
-        if (!token || !macro) return Promise.reject();
-
-        const cleaner = new MarkerCleaner(this.logger);
-        cleaner.clearUserMarkers(macro, this.user);
-        cleaner.clearMarkers(macro);
-
-        const entity: Flaggable = token.data.actorLink && token.actor
-            ? token.actor
-            : token;
-
-        return this._toggleMacro(macro, entity, colour);
+        this.logger.warn('toggleTokenMacro is deprecated and will soon be removed. Use toggle instead.');
+        return this._toggleTokenMacro(macro, token, colour);
     }
 
+    /**
+     * @deprecated use MacroMarer.toggle instead
+     */
     async toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
-        if (!macro) this.logger.error('Toggle User | Macro is undefined.');
-        if (!user) this.logger.error('Toggle User | User is undefined.');
-        if (!user || !macro) return Promise.reject();
-
-        const cleaner = new MarkerCleaner(this.logger);
-        const token = this.listControlledTokens()[0];
-        if (token)
-            cleaner.clearTokenMarkers(macro, token);
-
-        cleaner.clearMarkers(macro);
-
-        return this._toggleMacro(macro, user, colour);
+        this.logger.warn('toggleUserMacro is deprecated and will soon be removed. Use toggle instead.');
+        return this._toggleUserMacro(macro, user, colour);
     }
 
+    /**
+     * @deprecated use MacroMarer.toggle instead
+     */
     async toggleMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
-        if (!macro) {
-            this.logger.error('Toggle Macro | Macro is undefined.'); 
-            return Promise.reject();
-        }
-
-        const cleaner = new MarkerCleaner(this.logger);
-        const token = this.listControlledTokens()[0];
-        if (token)
-            cleaner.clearTokenMarkers(macro, token);
-
-        cleaner.clearUserMarkers(macro, this.user);
-        
-        return this._toggleMacro(macro, macro, colour);
+        this.logger.warn('toggleMacro is deprecated and will soon be removed. Use toggle instead.');
+        return this._toggleWorldMacro(macro, colour);
     }
     
     public isActive(macro: Macro & Flaggable, data?: { token?: Token & Flaggable, user?: Flaggable }): boolean {
@@ -100,16 +84,23 @@ export class MacroMarker {
 
     public toggle(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
         if (data?.token && data.user) {
-            ui.notifications.warn('Markers cannot be set on both tokens and users.');
+            this.logger.warn('Markers cannot be set on both tokens and users.');
             Promise.reject();
         }
+        if (data?.token || data?.user) {
+            this.logger.warn('`toggle(macro, { token } and { user })` are deprecated and will soon be removed. Please use `toggle(macro, { entity: token } and { entity: user })` instead.');
+        }
+        if (data && !data?.entity) {
+            data.entity = data?.token || data?.user;
+        }
 
-        if (data?.token)
-            return this.toggleTokenMacro(macro, data.token, data.colour);
-        else if(data?.user)
-            return this.toggleUserMacro(macro, data.user, data.colour);
+        // TODO: extract logic to determine what type of entity it is?
+        if (data?.entity && data.entity.constructor.name === 'Token')
+            return this._toggleTokenMacro(macro, <Token & Flaggable>data.entity, data.colour);
+        else if(data?.entity && data.entity.constructor.name === 'User')
+            return this._toggleUserMacro(macro, data.entity, data.colour);
         else
-            return this.toggleMacro(macro, data?.colour);
+            return this._toggleWorldMacro(macro, data?.colour);
     }
 
     public activate(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
@@ -126,6 +117,53 @@ export class MacroMarker {
         return this.toggle(macro, data);
     }
 
+    async _toggleTokenMacro(macro: Macro, token: Token & Flaggable, colour?: string): Promise<Flaggable> {
+        if (!macro) this.logger.error('Toggle Token | Macro is undefined.');
+        if (!token) this.logger.error('Toggle Token | Token is undefined.');
+        if (!token || !macro) return Promise.reject();
+
+        const cleaner = new MarkerCleaner(this.logger);
+        cleaner.clearUserMarkers(macro, this.user);
+        cleaner.clearMarkers(macro);
+
+        const entity: Flaggable = token.data.actorLink && token.actor
+            ? token.actor
+            : token;
+
+        return this._toggleMacro(macro, entity, colour);
+    }
+
+    async _toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
+        if (!macro) this.logger.error('Toggle User | Macro is undefined.');
+        if (!user) this.logger.error('Toggle User | User is undefined.');
+        if (!user || !macro) return Promise.reject();
+
+        const cleaner = new MarkerCleaner(this.logger);
+        const token = this.listControlledTokens()[0];
+        if (token)
+            cleaner.clearTokenMarkers(macro, token);
+
+        cleaner.clearMarkers(macro);
+
+        return this._toggleMacro(macro, user, colour);
+    }
+
+    async _toggleWorldMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
+        if (!macro) {
+            this.logger.error('Toggle Macro | Macro is undefined.'); 
+            return Promise.reject();
+        }
+
+        const cleaner = new MarkerCleaner(this.logger);
+        const token = this.listControlledTokens()[0];
+        if (token)
+            cleaner.clearTokenMarkers(macro, token);
+
+        cleaner.clearUserMarkers(macro, this.user);
+        
+        return this._toggleMacro(macro, macro, colour);
+    }
+
     private async _toggleMacro(macro: Macro, flaggable: Flaggable, colour?: string): Promise<Flaggable>{
         const flags = new MarkerFlags(this.logger, flaggable);
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
@@ -137,8 +175,8 @@ export class MacroMarker {
             ? { active: !existingMarker.active, colour }
             : { active: true, colour };
 
-        // TODO: inject
-        if (game.user.isGM)
+        // TODO: extract condition if it needs to be testable
+        if (macro.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OWNER))
             return flags.addMarker(macro.id, marker)
                 .then(updatedFlaggable => {
                     Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
