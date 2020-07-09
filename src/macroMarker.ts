@@ -51,7 +51,7 @@ export class MacroMarker {
             ? token.actor
             : token;
 
-        return this._toggleMacro(macro, new MarkerFlags(this.logger, entity), colour);
+        return this._toggleMacro(macro, entity, colour);
     }
 
     async toggleUserMacro(macro: Macro, user: Flaggable, colour?: string): Promise<Flaggable> {
@@ -66,7 +66,7 @@ export class MacroMarker {
 
         cleaner.clearMarkers(macro);
 
-        return this._toggleMacro(macro, new MarkerFlags(this.logger, user), colour);
+        return this._toggleMacro(macro, user, colour);
     }
 
     async toggleMacro(macro: Macro & Flaggable, colour?: string): Promise<Flaggable> {
@@ -82,7 +82,7 @@ export class MacroMarker {
 
         cleaner.clearUserMarkers(macro, this.user);
         
-        return this._toggleMacro(macro, new MarkerFlags(this.logger, macro), colour);
+        return this._toggleMacro(macro, macro, colour);
     }
     
     public isActive(macro: Macro & Flaggable, data?: { token?: Token & Flaggable, user?: Flaggable }): boolean {
@@ -126,7 +126,8 @@ export class MacroMarker {
         return this.toggle(macro, data);
     }
 
-    private async _toggleMacro(macro: Macro, flags: MarkerFlags, colour?: string): Promise<Flaggable>{
+    private async _toggleMacro(macro: Macro, flaggable: Flaggable, colour?: string): Promise<Flaggable>{
+        const flags = new MarkerFlags(this.logger, flaggable);
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
 
         // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
@@ -139,17 +140,17 @@ export class MacroMarker {
         // TODO: inject
         if (game.user.isGM)
             return flags.addMarker(macro.id, marker)
-                .then(flaggable => {
+                .then(updatedFlaggable => {
                     Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
-                    return flaggable;
+                    return updatedFlaggable;
                 });
 
         const gm = RemoteExecutor.create(this.logger);
-        return gm.updateMarker(macro.id, marker, flags.flaggable)
+        return gm.updateMarker(macro.id, marker, flaggable)
             .then(() => {
                 this.logger.debug('Remote execution completed.');
                 Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
-                return flags.flaggable;
+                return flaggable;
             });
     }
 }

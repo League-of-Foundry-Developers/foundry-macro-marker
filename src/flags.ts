@@ -15,8 +15,7 @@ export interface Flaggable {
 
 export class MarkerFlags {
     private readonly key = 'activeMacros';
-    // TODO: make flaggable private again after refactoring MacroMarker
-    constructor(private logger: Logger, public flaggable: Flaggable) { }
+    constructor(private logger: Logger, private flaggable: Flaggable) { }
 
     addMarker(macroId: string, marker: Marker): Promise<Flaggable> {
         const existingMarkers = this.getMarkers();

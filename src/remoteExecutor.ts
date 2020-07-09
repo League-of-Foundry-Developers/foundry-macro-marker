@@ -51,7 +51,7 @@ export class RemoteExecutor {
 
     private constructor(private logger: Logger, private socket: FoundrySocket, private currentUser: User, private users: User[]) { }
 
-    // TODO: rip out direct references to `game`
+    // TODO: rip out direct references to `game`?
     static create(logger: Logger): RemoteExecutor {
         if (!RemoteExecutor._instance)
             RemoteExecutor._instance = new RemoteExecutor(logger, <FoundrySocket><unknown>game.socket, game.user, game.users.entities);
