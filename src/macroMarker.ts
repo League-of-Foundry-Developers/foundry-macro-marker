@@ -183,6 +183,7 @@ export class MacroMarker {
                     return updatedFlaggable;
                 });
 
+        // TODO: inject if it needs to be testable
         const gm = RemoteExecutor.create(this.logger);
         return gm.updateMarker(macro.id, marker, flaggable)
             .then(() => {

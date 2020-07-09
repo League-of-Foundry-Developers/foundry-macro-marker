@@ -1,19 +1,22 @@
 import CONSTANTS from './constants';
-import { Marker, MarkerCollection } from './marker';
+import { Marker, MarkerCollection, MacroMarkerCollection } from './marker';
 import { Logger } from './logger';
 import { ActiveData } from './macroConfig';
 import { MarkerTypes } from './remoteExecutor';
+import { MacroMarker } from './macroMarker';
 
-export interface Flaggable {
+export class Identifiable {
     id: string;
-    markerType: MarkerTypes,
+    markerType: MarkerTypes;
+}
+
+export interface Flaggable extends Identifiable {
     setFlag<T>(scope: string, key: string, value: T) : Promise<Flaggable>;
     unsetFlag(scope: string, key: string) : Promise<Flaggable>;
     getFlag<T>(scope: string, key: string) : T | undefined;
-    
 }
 
-export class MarkerFlags {
+export class EntityMarkerFlags {
     private readonly key = 'activeMacros';
     constructor(private logger: Logger, private flaggable: Flaggable) { }
 
@@ -38,6 +41,43 @@ export class MarkerFlags {
         delete existingMarkers[macroId];
         return this.setMarkers(existingMarkers);
     }
+}
+
+export class MacroMarkerFlags {
+    private readonly key = 'markers';
+
+    constructor(private logger: Logger, private macro: Macro) { }
+
+    addMarker(entity: Identifiable, isActive: boolean): Promise<Flaggable> { 
+        const existingMarkers = this.getMarkers();
+        if (existingMarkers.type !== entity.markerType) {
+            existingMarkers.markers = {};
+        }
+        existingMarkers.markers[entity.id] = isActive;
+        return this.setMarkers(existingMarkers);
+    }
+    setMarkers(data: MacroMarkerCollection): Promise<Flaggable> {
+        this.logger.debug('Setting Marker', this.macro, data);
+        return this.macro.unsetFlag(CONSTANTS.module.name, this.key)
+            .then(entity => entity.setFlag(CONSTANTS.module.name, this.key, data));
+    }
+
+    getMarkers(): MacroMarkerCollection {
+        return this.macro.getFlag(CONSTANTS.module.name, this.key) || { markers: {} };
+    }
+
+    unsetMarkers(): Promise<Flaggable> {
+        return this.macro.unsetFlag(CONSTANTS.module.name, this.key);
+    }
+}
+
+// TODO: implement using 'get old flags + add new flags + wipe old flags'
+// Can only be used once colour is in Macro Marker configuration. (merge with branch!)
+export class MigratingMarkerFlags extends MacroMarkerFlags {
+    addMarker(entity: Identifiable, isActive: boolean);
+    setMarkers(data: MacroMarkerCollection): Promise<Flaggable>;
+    getMarkers(): MacroMarkerCollection;
+    unsetMarkers(macroId: string): Promise<Flaggable>;
 }
 
 export class DataFlags {
