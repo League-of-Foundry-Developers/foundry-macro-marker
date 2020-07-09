@@ -16,7 +16,7 @@ export class NotifiedLogger implements Logger {
     }
 
     warn(...message: unknown[]): void {
-        ui.notifications.error('Macro Marker: Warning! Please check the console (F12).');
+        ui.notifications.warn('Macro Marker: Warning! Please check the console (F12).');
         this.logger.warn(...message);
     }
 
@@ -30,7 +30,7 @@ export class NotifiedLogger implements Logger {
 }
 
 export class ConsoleLogger implements Logger {
-    readonly prefix = `${CONSTANTS.module.title} | `;
+    readonly prefix = `${CONSTANTS.module.title} |`;
 
     error(...message: unknown[]): void {
         console.error.apply(null, [ this.prefix, ...message ]);
