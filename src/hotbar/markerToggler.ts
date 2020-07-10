@@ -1,8 +1,9 @@
-import { MacroMarker } from '../macroMarker';
-import { Flaggable, MarkerConfigurationFlags } from '../flags';
-import { Settings } from '../settings';
-import { Logger } from '../logger';
-import { MarkerConfiguration } from '../macroMarkerConfig';
+import { MacroMarker } from '../macros/macroMarker';
+import { Flaggable } from '../macros/macroMarkerFlags';
+import { MarkerConfigurationFlags } from '../markerConfiguration/markerConfigurationFlags';
+import { Settings } from '../utils/settings';
+import { Logger } from '../utils/logger';
+import { MarkerConfiguration } from '../markerConfiguration/markerConfiguration';
 
 export class markerToggler {
     constructor(private macros: Map<string, Macro>, private logger: Logger, private settings: Settings, private marker: MacroMarker) { }

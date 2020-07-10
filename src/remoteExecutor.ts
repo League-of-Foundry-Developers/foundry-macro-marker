@@ -1,6 +1,6 @@
-import { Flaggable, MigratingMarkerFlags } from './flags';
-import CONSTANTS from './constants';
-import { ConsoleLogger, Logger, NotifiedLogger } from './logger';
+import { Flaggable, MigratingMarkerFlags } from './macros/macroMarkerFlags';
+import CONSTANTS from './utils/constants';
+import { ConsoleLogger, Logger, NotifiedLogger } from './utils/logger';
 
 declare class FoundrySocket {
     emit: (scope: string, data: UpdateMarkerMessage | MarkerUpdatedMessage) => Promise<unknown>;

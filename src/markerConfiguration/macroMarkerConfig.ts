@@ -1,14 +1,9 @@
-import { ConsoleLogger } from './logger';
-import { MarkerConfigurationFlags, Flaggable } from './flags';
-import CONSTANTS from './constants';
-import { Settings } from './settings';
-
-export interface MarkerConfiguration {
-    icon?: string,
-    tooltip?: string,
-    trigger?: string,
-    colour?: string
-}
+import { ConsoleLogger } from '../utils/logger';
+import { Flaggable } from '../macros/macroMarkerFlags';
+import { MarkerConfigurationFlags } from './markerConfigurationFlags';
+import CONSTANTS from '../utils/constants';
+import { Settings } from '../utils/settings';
+import { MarkerConfiguration } from './markerConfiguration';
 
 export class MacroMarkerConfig {
     public static init(): void {

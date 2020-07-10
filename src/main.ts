@@ -1,12 +1,13 @@
-import { Flaggable, MarkerConfigurationFlags } from './flags';
+import { Flaggable } from './macros/macroMarkerFlags';
+import { MarkerConfigurationFlags } from './markerConfiguration/markerConfigurationFlags';
 import { markerToggler } from './hotbar/markerToggler';
-import { MacroMarker } from './macroMarker';
-import CONSTANTS from './constants';
-import { Settings } from './settings';
-import { ConsoleLogger, NotifiedLogger } from './logger';
-import { MacroMarkerConfig } from './macroMarkerConfig';
+import { MacroMarker } from './macros/macroMarker';
+import CONSTANTS from './utils/constants';
+import { Settings } from './utils/settings';
+import { ConsoleLogger, NotifiedLogger } from './utils/logger';
+import { MacroMarkerConfig } from './markerConfiguration/macroMarkerConfig';
 import { RemoteExecutor } from './remoteExecutor';
-import { Extensions } from './foundry';
+import { Extensions } from './utils/foundry';
 
 declare class Hotbar {
     _onHoverMacro(event: Event, ...args: unknown[]): void;

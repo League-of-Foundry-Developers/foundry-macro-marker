@@ -1,4 +1,4 @@
-import { MarkerTypes } from './remoteExecutor';
+import { MarkerTypes } from '../remoteExecutor';
 
 declare global {
     interface Entity {
