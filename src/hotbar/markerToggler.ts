@@ -5,7 +5,7 @@ import { Settings } from '../utils/settings';
 import { Logger } from '../utils/logger';
 import { MarkerConfiguration } from '../markerConfiguration/markerConfiguration';
 
-export class markerToggler {
+export class MarkerToggler {
     constructor(private macros: Map<string, Macro>, private logger: Logger, private settings: Settings, private marker: MacroMarker) { }
 
     showMarkers(hotbar: HTMLElement, token?: Token): void {
@@ -68,9 +68,7 @@ export class markerToggler {
         slot.style.setProperty('color', 'black'); //set color back to default just to be sure
 
         if (img) {
-            const inactiveImg = (<any>macro.data).img;
-                
-            img.src = inactiveImg;
+            img.src = (<any>macro.data).img;
             img.style.setProperty('filter', `brightness(${this.settings.dimInactive || 100}%)`);
             this.fixSlotZIndex(slot, img, key);
         }

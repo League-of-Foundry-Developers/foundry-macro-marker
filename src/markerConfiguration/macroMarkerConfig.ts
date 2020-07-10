@@ -5,11 +5,11 @@ import CONSTANTS from '../utils/constants';
 import { Settings } from '../utils/settings';
 import { MarkerConfiguration } from './markerConfiguration';
 
-export class MacroMarkerConfig {
+export class MacroMarkerConfigTab {
     public static init(): void {
         Hooks.on('renderMacroConfig', (_, jhtml, data) => { 
             const macro = game.macros.get(data.entity._id);
-            MacroMarkerConfig.renderConfig(Settings._load(), jhtml[0], macro);
+            MacroMarkerConfigTab.renderConfig(Settings._load(), jhtml[0], macro);
             return true;
         });
     }
@@ -23,7 +23,7 @@ export class MacroMarkerConfig {
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);
         // renderTemplate returns string instead of HTMLElement...
-        MacroMarkerConfig.addTab(html, <string><unknown>template);
+        MacroMarkerConfigTab.addTab(html, <string><unknown>template);
     }
 
     private static addTab(html: HTMLElement, template: string) {
