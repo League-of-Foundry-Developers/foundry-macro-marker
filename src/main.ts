@@ -1,5 +1,5 @@
 import { Flaggable, DataFlags } from './flags';
-import { HotbarMarker } from './hotbarMarker';
+import { markerToggler } from './hotbar/markerToggler';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
@@ -10,12 +10,6 @@ import { Extensions } from './foundry';
 
 declare class Hotbar {
     _onHoverMacro(event: Event, ...args: unknown[]): void;
-}
-
-interface ExecutionContext {
-    token?: Token,
-    actor?: Actor,
-    macro: Macro
 }
 
 Hooks.on('init', () => {
@@ -77,7 +71,7 @@ Hooks.on('init', () => {
                 const logger = new NotifiedLogger(new ConsoleLogger());
                 const settings = Settings._load();
                 const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
-                new HotbarMarker(game.macros, logger, settings, marker).showTooltip(li, canvas.tokens.controlled[0]);
+                new markerToggler(game.macros, logger, settings, marker).showTooltip(li, canvas.tokens.controlled[0]);
             }
         };
 });
@@ -119,7 +113,7 @@ function renderMarkers(hotbar: HTMLElement) {
     const logger = new NotifiedLogger(new ConsoleLogger());
     const settings = Settings._load();
     const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
-    const hotbarMarker = new HotbarMarker(
+    const hotbarMarker = new markerToggler(
         game.macros,
         logger,
         settings,
