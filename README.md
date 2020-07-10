@@ -16,7 +16,7 @@ Dimming the inactive macros is configurable in the module settings.
 
 ### Alternative icon and tooltip
 <p align="center">
-<img src="./img/mm-config.png" width="500px" />
+<img src="./img/mm-marker-config.png" width="500px" />
 </p>
 <p align="center">
 <img src="./img/mm-tooltip.gif" width="500px" />
@@ -30,6 +30,30 @@ Dimming the inactive macros is configurable in the module settings.
 </p>
 
 ## Usage
+The primary way to use this module, is to set a condition or trigger when the marker is activated. This is done in the macro configuration. This dialog now has an extra tab named "_marker_".
+
+### Trigger-based toggles
+
+The script will execute on any change to the character sheet, when the hotbar renders (e.g. on page changes) and when you select a token.
+
+When the script returns `true`, the marker will be activated. When it returns `false`, it will be deactivated.
+
+Like in the actual macro, you can use the `this` (current macro), `token` (selected token), `actor` (actor of selected token) and `character` (the user's character) variables.
+
+Example:
+The following trigger activates the marker when
+a) a token is selected; and
+b) the strength modifier is less than 0.
+```js
+if (!token)
+  return false;
+
+return actor.data.data.abilities.str.mod < 0;
+```
+
+If using a trigger like the one above is not an option, you can use flags instead.
+
+### Flag-based toggles
 You can toggle the state on one of three entities:
 
 1. Macro
@@ -48,7 +72,7 @@ Toggling the state on the token will make it visible for whoever controls the to
 
 ```js
 let token = canvas.tokens.controlled[0];
-MacroMarker.toggle(macro, { token: token });
+MacroMarker.toggle(macro, { entity: token });
 ```
 
 ### User
@@ -56,35 +80,29 @@ Toggling the state on the user will make it visible for only that user irregardl
 
 ```js
 let user = game.user;
-MacroMarker.toggle(macro, { user: user });
+MacroMarker.toggle(macro, { entity: user });
 ```
 
-### Manual toggles
+## Manual toggles
 Alternatively, you can manually activate and deactivate it, using the same function signature as the `toggle`  function.
+
 
 ```js
 MacroMarker.activate(macro);
 MacroMarker.deactivate(macro);
 
-MacroMarker.activate(macro, { user: user });
-MacroMarker.deactivate(macro, { token: token });
+MacroMarker.activate(macro, { entity: user });
+MacroMarker.deactivate(macro, { entity: token });
 ```
 
-### Using a custom colour
-You can supply an alternative colour, by passing it in the data object of any of the above mentioned methods.
-You can use any colour that is valid in [CSS](https://www.w3schools.com/cssref/css_colors_legal.asp).
-
-```js
-MacroMarker.toggle(macro, { token: token, colour: 'gold' });
-MacroMarker.activate(macro, { user: user, colour: 'gold' });
-MacroMarker.deactivate(macro, { colour: 'gold' });
-```
-
-### Checking the state
+## Checking the state
 Finally, you can also check the state:
 
 ```js
 MacroMarker.isActive(macro);
-MacroMarker.isActive(macro, { token: token });
-MacroMarker.isActive(macro, { user: user });
+MacroMarker.isActive(macro, { entity: token });
+MacroMarker.isActive(macro, { entity: user });
 ```
+
+## Marker configuration
+You can configure an alternative tooltip, icon and colour when editing the macro.
