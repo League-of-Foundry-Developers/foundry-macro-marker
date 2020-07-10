@@ -1,5 +1,4 @@
-import { Marker } from './marker';
-import { Flaggable, EntityMarkerFlags } from './flags';
+import { Flaggable, MigratingMarkerFlags } from './flags';
 import CONSTANTS from './constants';
 import { ConsoleLogger, Logger, NotifiedLogger } from './logger';
 
@@ -25,7 +24,7 @@ interface Entity {
 
 interface UpdateMarkerMessage extends Message {
     macroId: string,
-    marker: Marker,
+    isActive: boolean,
     entity: Entity,
     forGM: string
 }
@@ -74,19 +73,26 @@ export class RemoteExecutor {
             if (!this.isExecutingGM(msg))
                 return;
 
+            const macro = game.macros.get(msg.macroId);
+            if (!macro) {
+                this.logger.error('Executing as GM | Macro not found', msg.macroId);
+                this.confirmUpdate(msg, 'Macro not found');
+            }
             const flag = this.getFlaggable(msg.entity);
             if (!flag) {
                 this.logger.error('Executing as GM | Entity not found', msg.entity);
                 this.confirmUpdate(msg, 'Invalid Entity');
                 return;
             }
+            // TODO: use this when using MacroMarkerFlags in the next major version.
+            // const entity = { id: msg.entity.id, markerType: msg.entity.type };
             const logger = new NotifiedLogger(new ConsoleLogger());
-            const marker = new EntityMarkerFlags(logger, flag);
-            marker.addMarker(msg.macroId, msg.marker).then(() => this.confirmUpdate(msg));
+            const marker = new MigratingMarkerFlags(logger, macro, flag);
+            marker.addMarker(flag, msg.isActive).then(() => this.confirmUpdate(msg));
         }
     }
 
-    updateMarker(macroId: string, data: Marker, flag: Flaggable ): Promise<unknown> {
+    updateMarker(macroId: string, isActive: boolean, flag: Flaggable ): Promise<unknown> {
         const messageId = this.generateId();
         const executingGM = this.chooseExecutingGM();
         if (!executingGM) {
@@ -98,7 +104,7 @@ export class RemoteExecutor {
             const message: UpdateMarkerMessage = {
                 type: 'updateMarker',
                 macroId: macroId,
-                marker: data,
+                isActive: isActive,
                 entity: {
                     type: flag.markerType,
                     id: flag.id

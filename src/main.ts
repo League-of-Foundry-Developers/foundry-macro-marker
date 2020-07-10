@@ -1,11 +1,10 @@
-import { Flaggable, DataFlags, EntityMarkerFlags } from './flags';
+import { Flaggable, DataFlags, MigratingMarkerFlags } from './flags';
 import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { ConsoleLogger, NotifiedLogger } from './logger';
 import { MacroMarkerConfig } from './macroMarkerConfig';
-import { MarkerCleaner } from './markerCleaner';
 import { RemoteExecutor } from './remoteExecutor';
 import { Extensions } from './foundry';
 
@@ -78,7 +77,6 @@ Hooks.on('ready', () => {
     const logger = new NotifiedLogger(new ConsoleLogger());
     RemoteExecutor.init(logger);
     window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
-    window['MarkerCleaner'] = new MarkerCleaner(logger);
     
     MacroMarkerConfig.init();
 });
@@ -157,18 +155,22 @@ Hooks.on('updateActor', (actor, data) => {
             ui.notifications.error(`Trigger for macro marker on '${macro.name}' does not return a boolean value.`);
             continue;
         }
-        // TODO: move this logic
-        const userFlags = new EntityMarkerFlags(logger, game.user);
-        const tokenFlags = token && new EntityMarkerFlags(logger, token);
-        const markerData = userFlags.getMarkers()[macro.id] 
-            ? { user: game.user } 
-            : tokenFlags?.getMarkers()[macro.id]
-                ? { token: token }
-                : { };
+
+        // TODO: move this logic?
+        const userFlags = new MigratingMarkerFlags(logger, macro, game.user).getMarkers();
+        const tokenFlags = token && new MigratingMarkerFlags(logger, macro, token).getMarkers();
+        
+        let entity: Flaggable | undefined;
+        if (game.user.id in userFlags.markers) {
+            entity = game.user; 
+        } else if (token && token.id in tokenFlags.markers){
+            entity = token;
+        } 
+
         if (isActive) {
-            marker.activate(macro, markerData);
+            marker.activate(macro, { entity });
         } else {
-            marker.deactivate(macro, markerData);
+            marker.deactivate(macro, { entity });
         }
     }
 });

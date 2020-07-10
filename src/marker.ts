@@ -11,7 +11,7 @@ export interface MarkerCollection {
 
 export interface MacroMarkerCollection {
     markers: {
-        [entityId: string]: boolean
+        [entityId: string]: boolean | undefined
     },
     type: MarkerTypes
 }

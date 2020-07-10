@@ -15,7 +15,7 @@ export interface Flaggable extends Identifiable {
     getFlag<T>(scope: string, key: string) : T | undefined;
 }
 
-export class EntityMarkerFlags {
+class EntityMarkerFlags {
     private readonly key = 'activeMacros';
     constructor(private logger: Logger, private flaggable: Flaggable) { }
 
@@ -49,6 +49,7 @@ export class MacroMarkerFlags {
 
     addMarker(entity: Identifiable, isActive: boolean): Promise<Flaggable> { 
         const existingMarkers = this.getMarkers();
+        // Markers can only be set for one type to prevent weird toggling behaviour.
         if (existingMarkers.type !== entity.markerType) {
             existingMarkers.markers = {};
         }
@@ -100,14 +101,14 @@ export class MigratingMarkerFlags extends MacroMarkerFlags {
 
 export class DataFlags {
     private key = 'activeData';
-    constructor(private logger: Logger, private flaggable: Flaggable) { }
+    constructor(private logger: Logger, private macro: Flaggable) { }
 
     getData(): MarkerConfiguration {
-        return this.flaggable.getFlag(CONSTANTS.module.name, this.key) || {};
+        return this.macro.getFlag(CONSTANTS.module.name, this.key) || {};
     }
 
     setData(data: MarkerConfiguration): Promise<Flaggable> {
-        return this.flaggable.unsetFlag(CONSTANTS.module.name, this.key)
+        return this.macro.unsetFlag(CONSTANTS.module.name, this.key)
             .then(entity => entity.setFlag(CONSTANTS.module.name, this.key, data));
     }
 }

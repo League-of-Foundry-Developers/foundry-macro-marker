@@ -16,10 +16,10 @@ export class HotbarMarker {
             if (!macro)
                 continue;
 
-            const marker = this.marker.getMarker(macro, token);
+            const isActive = this.marker.getMarker(macro, token) || false;
             const configuration = new DataFlags(this.logger, macro).getData();
 
-            if (marker?.active) {
+            if (isActive) {
                 slot.classList.add('macro-marker');
                 slot.style.setProperty('color', configuration?.colour ? configuration.colour : 'var(--macro-marker-color)');
             } else {
@@ -34,10 +34,10 @@ export class HotbarMarker {
                 const inactiveImg = (<any>macro.data).img;
                 const icon: string | undefined = configuration.icon; //macro.getFlag(CONSTANTS.module.name, 'activeData')?.icon;
                 
-                img.src = marker?.active && icon ? icon : inactiveImg;
-                img.style['filter'] = marker?.active ? 'brightness(100%)' : `brightness(${this.settings.dimInactive}%)`;
-                slot.style['z-index'] = img.style['z-index'] + 1;
-                if (key) key.style['z-index'] = img.style['z-index'] + 2;
+                img.src = isActive && icon ? icon : inactiveImg;
+                img.style.setProperty('filter', isActive ? 'brightness(100%)' : `brightness(${this.settings.dimInactive}%)`);
+                slot.style.setProperty('z-index', img.style['z-index'] + 1);
+                if (key) key.style.setProperty('z-index', img.style['z-index'] + 2);
             }
         }
     }
@@ -59,9 +59,9 @@ export class HotbarMarker {
             return;
         }
 
-        const marker = this.marker.getMarker(macro, token);
+        const isActive = this.marker.getMarker(macro, token) || false;
         const dataFlags = new DataFlags(this.logger, macro);
-        if (!marker?.active)
+        if (!isActive)
             return;
 
         // We have to search the document for the tooltip, because it doesn't exist on event.target yet
