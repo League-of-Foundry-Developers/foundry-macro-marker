@@ -1,4 +1,4 @@
-import { Logger, ConsoleLogger } from './logger';
+import { ConsoleLogger } from './logger';
 import { DataFlags, Flaggable } from './flags';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
@@ -24,7 +24,7 @@ export class MacroMarkerConfig {
         const dataFlags = new DataFlags(logger, macro);
         const data: MarkerConfiguration = dataFlags.getData();
         data['module'] = CONSTANTS.module.name;
-        data.colour = data.colour || '#ffffff';
+        data.colour = data.colour || settings.defaultColour;
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);
         // renderTemplate returns string instead of HTMLElement...

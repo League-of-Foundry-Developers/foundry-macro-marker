@@ -1,4 +1,4 @@
-import { Flaggable, MigratingMarkerFlags } from './flags';
+import { Flaggable, MigratingMarkerFlags, DataFlags } from './flags';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { Logger } from './logger';
@@ -45,7 +45,7 @@ export class MacroMarker {
     }
 
     /**
-     * @deprecated use MacroMarer.toggle instead
+     * @deprecated use MacroMarker.toggle instead
      */
     async toggleTokenMacro(macro: Macro, token: Token & Flaggable): Promise<Flaggable> {
         this.logger.warn('toggleTokenMacro is deprecated and will soon be removed. Use toggle instead.');
@@ -53,7 +53,7 @@ export class MacroMarker {
     }
 
     /**
-     * @deprecated use MacroMarer.toggle instead
+     * @deprecated use MacroMarker.toggle instead
      */
     async toggleUserMacro(macro: Macro, user: Flaggable): Promise<Flaggable> {
         this.logger.warn('toggleUserMacro is deprecated and will soon be removed. Use toggle instead.');
@@ -61,7 +61,7 @@ export class MacroMarker {
     }
 
     /**
-     * @deprecated use MacroMarer.toggle instead
+     * @deprecated use MacroMarker.toggle instead
      */
     async toggleMacro(macro: Macro & Flaggable): Promise<Flaggable> {
         this.logger.warn('toggleMacro is deprecated and will soon be removed. Use toggle instead.');
@@ -69,6 +69,11 @@ export class MacroMarker {
     }
     
     public isActive(macro: Macro & Flaggable, data?: ToggleData): boolean {
+        const trigger = this.evaluateTrigger(macro);
+
+        if (trigger !== null)
+            return trigger;
+            
         let entity: Flaggable = macro;
         const type = data?.entity?.constructor.name;
         if (data?.token || type === Token.constructor.name) {
@@ -172,5 +177,17 @@ export class MacroMarker {
                 Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
                 return flaggable;
             });
+    }
+
+    private evaluateTrigger(macro: Macro): boolean | null {
+        const config = new DataFlags(this.logger, macro).getData();
+        const selectedToken = this.listControlledTokens()[0];
+            
+        if (!config.trigger) {
+            return null;
+        }
+        const trigger = Function(`return function(token, actor, character) { ${config.trigger} }`)();
+
+        return !!trigger.call(macro, selectedToken, selectedToken?.actor, game.user.character);
     }
 }

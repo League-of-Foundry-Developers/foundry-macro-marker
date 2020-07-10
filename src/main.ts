@@ -142,6 +142,7 @@ Hooks.on('renderHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]))
 Hooks.on('renderCustomHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
 
+// Save macro configuration
 Hooks.on('preUpdateMacro', (macro, data) => {
     const activeData = data[CONSTANTS.module.name];
     if (!activeData)
@@ -164,11 +165,7 @@ Hooks.on('updateActor', (actor, data) => {
     if (data.flags?.[CONSTANTS.module.name])
         return;
 
-    const token = canvas.tokens.controlled[0];
-    if (!token || token.actor.id !== actor.id)
-        return;
-
-    triggerMarker(actor, token);
+    triggerMarker(actor);
 });
 
 Hooks.on('updateToken', (scene, tokenData, updateData) => {
@@ -178,52 +175,19 @@ Hooks.on('updateToken', (scene, tokenData, updateData) => {
     if (!updateData.actorData)
         return;
 
-    const token = canvas.tokens.controlled[0];
-    if (!token || token.id != tokenData._id)
-        return;
+    const token = canvas.tokens.get(tokenData.id);
 
-    triggerMarker(token.actor, token);
+    triggerMarker(token.actor);
 });
 
-function triggerMarker(actor: Actor, token: Token) {
+function triggerMarker(actor: Actor) {
     const logger = new ConsoleLogger();
-    const settings = Settings._load();
     // use map, because getHotbarMacros() does not return Macro[], but { slot: number, macro: Macro }[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const macros: (Macro & Flaggable)[] = game.user.getHotbarMacros().map(slot => (<any>slot).macro).filter(x => x);
     
     for(const macro of macros) {
-        const config = new DataFlags(logger, macro).getData();
-        const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
-        
-        if (!config.trigger) {
-            continue;
-        }
-        const trigger = Function(`return function(actor) {
-            ${config.trigger}
-        }`)();
-        const context: ExecutionContext = { macro, actor, token };
-        const isActive = trigger.call(context);
-        if (typeof isActive !== 'boolean') {
-            ui.notifications.error(`Trigger for macro marker on '${macro.name}' does not return a boolean value.`);
-            continue;
-        }
-
-        // TODO: move this logic?
-        const userFlags = new MigratingMarkerFlags(logger, macro, game.user).getMarkers();
-        const tokenFlags = token && new MigratingMarkerFlags(logger, macro, token).getMarkers();
-        
-        let entity: Flaggable | undefined;
-        if (game.user.id in userFlags.markers) {
-            entity = game.user; 
-        } else if (token && token.id in tokenFlags.markers){
-            entity = token;
-        } 
-
-        if (isActive) {
-            marker.activate(macro, { entity });
-        } else {
-            marker.deactivate(macro, { entity });
-        }
+        execute(macro, actor);
     }
 }
+
