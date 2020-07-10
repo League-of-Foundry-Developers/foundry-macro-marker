@@ -1,4 +1,4 @@
-import { Flaggable, EntityMarkerFlags } from './flags';
+import { Flaggable, EntityMarkerFlags, MacroMarkerFlags } from './flags';
 import { Marker } from './marker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';

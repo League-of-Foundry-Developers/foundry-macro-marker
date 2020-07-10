@@ -45,7 +45,7 @@ export class EntityMarkerFlags {
 export class MacroMarkerFlags {
     private readonly key = 'markers';
 
-    constructor(private logger: Logger, private macro: Macro) { }
+    constructor(protected logger: Logger, protected macro: Macro) { }
 
     addMarker(entity: Identifiable, isActive: boolean): Promise<Flaggable> { 
         const existingMarkers = this.getMarkers();
@@ -73,10 +73,29 @@ export class MacroMarkerFlags {
 // TODO: implement using 'get old flags + add new flags + wipe old flags'
 // Can only be used once colour is in Macro Marker configuration. (merge with branch!)
 export class MigratingMarkerFlags extends MacroMarkerFlags {
-    // addMarker(entity: Identifiable, isActive: boolean);
-    // setMarkers(data: MacroMarkerCollection): Promise<Flaggable>;
-    // getMarkers(): MacroMarkerCollection;
-    // unsetMarkers(macroId: string): Promise<Flaggable>;
+    constructor(logger: Logger, macro: Macro, private flaggable: Flaggable) {
+        super(logger, macro);
+    }
+
+    addMarker(entity: Flaggable, isActive: boolean): Promise<Flaggable> {
+        const oldFlags = new EntityMarkerFlags(this.logger, this.flaggable);
+        const result = super.addMarker(entity, isActive);
+        oldFlags.unsetMarker(this.macro.id);
+        return result;
+    }
+
+    getMarkers(): MacroMarkerCollection {
+        const oldFlags = new EntityMarkerFlags(this.logger, this.flaggable);
+        const oldMarkers = oldFlags.getMarkers();
+        const newMarkers = super.getMarkers();
+
+        if (newMarkers.type === this.flaggable.markerType) {
+            this.logger.debug('Migration', { macro: this.macro.id, type: this.flaggable.markerType, entity: this.flaggable.id }, oldMarkers);
+            newMarkers.markers[this.flaggable.id] = oldMarkers[this.macro.id]?.active || false;
+        }
+
+        return newMarkers;
+    }
 }
 
 export class DataFlags {
