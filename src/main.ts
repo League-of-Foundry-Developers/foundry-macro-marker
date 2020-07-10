@@ -38,7 +38,7 @@ Hooks.on('preUpdateMacro', (macro, data) => {
 });
 
 Hooks.on('updateMacro', (macro, data) => {
-    if (data.flags[CONSTANTS.module.name])
+    if (data.flags?.[CONSTANTS.module.name])
         delayCallback(renderHotbars);
 });
 

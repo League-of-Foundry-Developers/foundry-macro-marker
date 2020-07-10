@@ -44,29 +44,3 @@ export class MacroMarkerFlags {
         return this.macro.unsetFlag(CONSTANTS.module.name, this.key);
     }
 }
-
-export class MigratingMarkerFlags extends MacroMarkerFlags {
-    constructor(logger: Logger, macro: Macro, private flaggable: Flaggable) {
-        super(logger, macro);
-    }
-
-    addMarker(entity: Flaggable, isActive: boolean): Promise<Flaggable> {
-        const oldFlags = new EntityMarkerFlags(this.logger, this.flaggable);
-        const result = super.addMarker(entity, isActive);
-        oldFlags.unsetMarker(this.macro.id);
-        return result;
-    }
-
-    getMarkers(): MacroMarkerCollection {
-        const oldFlags = new EntityMarkerFlags(this.logger, this.flaggable);
-        const oldMarkers = oldFlags.getMarkers();
-        const newMarkers = super.getMarkers();
-
-        if (newMarkers.type === this.flaggable.markerType) {
-            this.logger.debug('Migration', { macro: this.macro.id, type: this.flaggable.markerType, entity: this.flaggable.id }, oldMarkers);
-            newMarkers.markers[this.flaggable.id] = oldMarkers[this.macro.id]?.active || false;
-        }
-
-        return newMarkers;
-    }
-}

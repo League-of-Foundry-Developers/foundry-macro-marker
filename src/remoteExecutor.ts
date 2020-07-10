@@ -1,4 +1,4 @@
-import { Flaggable, MigratingMarkerFlags } from './macros/macroMarkerFlags';
+import { Flaggable, MacroMarkerFlags } from './macros/macroMarkerFlags';
 import CONSTANTS from './utils/constants';
 import { ConsoleLogger, Logger, NotifiedLogger } from './utils/logger';
 
@@ -130,20 +130,12 @@ export class RemoteExecutor {
             this.logger.error('Executing as GM | Macro not found', msg.macroId);
             this.confirmUpdate(msg, 'Macro not found');
         }
-        const flag = this.getFlaggable(msg.entity);
-        if (!flag) {
-            this.logger.error('Executing as GM | Entity not found', msg.entity);
-            this.confirmUpdate(msg, 'Invalid Entity');
-            return;
-        }
 
-        // TODO: use this when using MacroMarkerFlags in the next major version.
-        // const entity = { id: msg.entity.id, markerType: msg.entity.type };
+        const entity = { id: msg.entity.id, markerType: msg.entity.type };
         const logger = new NotifiedLogger(new ConsoleLogger());
-        const marker = new MigratingMarkerFlags(logger, macro, flag);
-        marker.addMarker(flag, msg.isActive).then(() => this.confirmUpdate(msg));
+        const marker = new MacroMarkerFlags(logger, macro);
+        marker.addMarker(entity, msg.isActive).then(() => this.confirmUpdate(msg));
     }
-
 
     private confirmUpdate(message: UpdateMarkerMessage, error?: string) {
         this.socket.emit(scope, { ...message, error, type: 'markerUpdated' });

@@ -1,7 +1,6 @@
-import { Flaggable, MigratingMarkerFlags } from './macroMarkerFlags';
+import { Flaggable, MacroMarkerFlags } from './macroMarkerFlags';
 import { MarkerConfigurationFlags } from '../markerConfiguration/markerConfigurationFlags';
 import CONSTANTS from '../utils/constants';
-import { Settings } from '../utils/settings';
 import { Logger } from '../utils/logger';
 import { RemoteExecutor } from '../remoteExecutor';
 
@@ -39,7 +38,7 @@ export class MacroMarker {
         if (entity) flags.push(entity);
 
         for(const flag of flags) {
-            const collection = new MigratingMarkerFlags(this.logger, macro, flag).getMarkers();
+            const collection = new MacroMarkerFlags(this.logger, macro).getMarkers();
             if (collection.markers[flag.id]) {
                 return collection.markers[flag.id];
             }
@@ -80,19 +79,19 @@ export class MacroMarker {
             return trigger;
             
         let entity: Flaggable = macro;
-        const type = data?.entity?.constructor.name;
-        if (data?.token || type === Token.constructor.name) {
+        const type = data?.entity?.markerType;
+        if (data?.token || type === 'Token') {
             const token = data?.token ?? <Token>data?.entity;
             entity = token?.data.actorLink && token.actor
                 ? token.actor
                 : token;
         } else if (data?.user) {
             entity = data.user;
-        } else if (data?.entity && type === User.constructor.name) {
+        } else if (data?.entity && type === 'User') {
             entity = data.entity;
         }
 
-        const markers = new MigratingMarkerFlags(this.logger, macro, entity);
+        const markers = new MacroMarkerFlags(this.logger, macro);
         const isActive = markers.getMarkers().markers[entity.id];
         return isActive || false;
     }
@@ -163,7 +162,7 @@ export class MacroMarker {
     }
 
     private async _toggleMacro(macro: Macro, flaggable: Flaggable): Promise<Flaggable>{
-        const flags = new MigratingMarkerFlags(this.logger, macro, flaggable);
+        const flags = new MacroMarkerFlags(this.logger, macro);
         const existingMarker: boolean | undefined = flags.getMarkers().markers[flaggable.id];
 
         // TODO: extract condition if it needs to be testable
@@ -193,6 +192,12 @@ export class MacroMarker {
         }
         const trigger = Function(`return function(token, actor, character) { ${config.trigger} }`)();
 
-        return !!trigger.call(macro, selectedToken, selectedToken?.actor, game.user.character);
+        try {
+            return !!trigger.call(macro, selectedToken, selectedToken?.actor, game.user.character);
+        } catch(error) {
+            this.logger.error('Evaluate Trigger |', error);
+            this.logger.info('Evaluate Trigger | Falling back to flags');
+            return null;
+        }
     }
 }
