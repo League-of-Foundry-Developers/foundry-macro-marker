@@ -62,7 +62,7 @@ export class HotbarMarker {
             return;
         }
 
-        const isActive = this.marker.getMarker(macro, token) || false;
+        const isActive = this.marker.isActive(macro, { entity: token });
         const dataFlags = new DataFlags(this.logger, macro);
         if (!isActive)
             return;
