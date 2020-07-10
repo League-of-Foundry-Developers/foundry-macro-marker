@@ -1,4 +1,4 @@
-import { Flaggable, MigratingMarkerFlags, DataFlags } from './flags';
+import { Flaggable, MigratingMarkerFlags, MarkerConfigurationFlags } from './flags';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { Logger } from './logger';
@@ -180,7 +180,7 @@ export class MacroMarker {
     }
 
     private evaluateTrigger(macro: Macro): boolean | null {
-        const config = new DataFlags(this.logger, macro).getData();
+        const config = new MarkerConfigurationFlags(this.logger, macro).getData();
         const selectedToken = this.listControlledTokens()[0];
             
         if (!config.trigger) {

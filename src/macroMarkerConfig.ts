@@ -1,5 +1,5 @@
 import { ConsoleLogger } from './logger';
-import { DataFlags, Flaggable } from './flags';
+import { MarkerConfigurationFlags, Flaggable } from './flags';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 
@@ -21,7 +21,7 @@ export class MacroMarkerConfig {
     
     private static async renderConfig(settings: Settings, html: HTMLElement, macro: Macro & Flaggable) {
         const logger = new ConsoleLogger();
-        const dataFlags = new DataFlags(logger, macro);
+        const dataFlags = new MarkerConfigurationFlags(logger, macro);
         const data: MarkerConfiguration = dataFlags.getData();
         data['module'] = CONSTANTS.module.name;
         data.colour = data.colour || settings.defaultColour;

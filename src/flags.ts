@@ -15,6 +15,9 @@ export interface Flaggable extends Identifiable {
     getFlag<T>(scope: string, key: string) : T | undefined;
 }
 
+/**
+ * @deprecated use MacroMarkerFlags instead
+ */
 class EntityMarkerFlags {
     private readonly key = 'activeMacros';
     constructor(private logger: Logger, private flaggable: Flaggable) { }
@@ -100,7 +103,7 @@ export class MigratingMarkerFlags extends MacroMarkerFlags {
     }
 }
 
-export class DataFlags {
+export class MarkerConfigurationFlags {
     private key = 'activeData';
     constructor(private logger: Logger, private macro: Flaggable) { }
 

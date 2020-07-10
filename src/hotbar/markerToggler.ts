@@ -1,5 +1,5 @@
 import { MacroMarker } from '../macroMarker';
-import { Flaggable, DataFlags } from '../flags';
+import { Flaggable, MarkerConfigurationFlags } from '../flags';
 import { Settings } from '../settings';
 import { Logger } from '../logger';
 import { MarkerConfiguration } from '../macroMarkerConfig';
@@ -39,7 +39,7 @@ export class markerToggler {
         }
 
         const isActive = this.marker.isActive(macro, { entity: token });
-        const dataFlags = new DataFlags(this.logger, macro);
+        const dataFlags = new MarkerConfigurationFlags(this.logger, macro);
         if (!isActive)
             return;
 
@@ -50,7 +50,7 @@ export class markerToggler {
 
     private updateMacroAppearance(macro: Macro, slot: HTMLElement, selectedToken?: Token) {
         const isActive = this.marker.isActive(macro, { entity: selectedToken });
-        const configuration = new DataFlags(this.logger, macro).getData();
+        const configuration = new MarkerConfigurationFlags(this.logger, macro).getData();
 
         const img = <HTMLImageElement>slot.querySelector('img.macro-icon');
         const key = <HTMLElement>slot.querySelector('span.macro-key');

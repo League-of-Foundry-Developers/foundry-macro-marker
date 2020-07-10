@@ -1,4 +1,4 @@
-import { Flaggable, DataFlags } from './flags';
+import { Flaggable, MarkerConfigurationFlags } from './flags';
 import { markerToggler } from './hotbar/markerToggler';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
@@ -143,7 +143,7 @@ Hooks.on('preUpdateMacro', (macro, data) => {
         return;
 
     const logger = new NotifiedLogger(new ConsoleLogger());
-    const flags = new DataFlags(logger, macro);
+    const flags = new MarkerConfigurationFlags(logger, macro);
     const oldData = flags.getData();
     flags.setData(Object.assign(oldData, activeData));
 
