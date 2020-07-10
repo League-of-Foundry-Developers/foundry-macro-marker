@@ -7,7 +7,7 @@
     "minimumCoreVersion": "0.6.0",
     "compatibleCoreVersion":"0.6.5",
     "scripts": ["macro-marker.js"],
-    "styles": ["css/macro-border.css"],
+    "styles": ["css/macro-border.css", "css/macro-config.css"],
     "manifest": "https://fvtt.janssen.io/macro-marker/{{ channel }}/module.json",
     "download": "https://fvtt.janssen.io/macro-marker/{{ channel }}/macro-marker.zip",
     "url": "https://github.com/janssen-io/foundry-macro-marker",

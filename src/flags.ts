@@ -2,7 +2,7 @@ import CONSTANTS from './constants';
 import { Marker, MarkerCollection, MacroMarkerCollection } from './marker';
 import { Logger } from './logger';
 import { MarkerTypes } from './remoteExecutor';
-import { ActiveData as MarkerConfiguration } from './macroMarkerConfig';
+import { MarkerConfiguration as MarkerConfiguration } from './macroMarkerConfig';
 
 export class Identifiable {
     id: string;

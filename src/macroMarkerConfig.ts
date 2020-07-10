@@ -2,10 +2,11 @@ import { Logger, ConsoleLogger } from './logger';
 import { DataFlags, Flaggable } from './flags';
 import CONSTANTS from './constants';
 
-export interface ActiveData {
+export interface MarkerConfiguration {
     icon?: string,
     tooltip?: string,
-    trigger?: string
+    trigger?: string,
+    colour?: string
 }
 
 export class MacroMarkerConfig {
@@ -22,7 +23,7 @@ export class MacroMarkerConfig {
     private static async renderConfig(html: HTMLElement, macro: Macro & Flaggable) {
         const logger = new ConsoleLogger();
         const dataFlags = new DataFlags(logger, macro);
-        const data: ActiveData = dataFlags.getData();
+        const data: MarkerConfiguration = dataFlags.getData();
         data['module'] = CONSTANTS.module.name;
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);

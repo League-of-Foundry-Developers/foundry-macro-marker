@@ -1,7 +1,6 @@
 import { MacroMarker } from './macroMarker';
 import { Flaggable, DataFlags } from './flags';
 import { Settings } from './settings';
-import CONSTANTS from './constants';
 import { Logger } from './logger';
 
 export class HotbarMarker {
@@ -18,10 +17,11 @@ export class HotbarMarker {
                 continue;
 
             const marker = this.marker.getMarker(macro, token);
+            const configuration = new DataFlags(this.logger, macro).getData();
 
             if (marker?.active) {
                 slot.classList.add('macro-marker');
-                slot.style.setProperty('color', marker?.colour ? marker.colour : 'var(--macro-marker-color)');
+                slot.style.setProperty('color', configuration?.colour ? configuration.colour : 'var(--macro-marker-color)');
             } else {
                 slot.classList.remove('macro-marker');
                 slot.style.setProperty('color', 'black'); //set color back to default just to be sure
@@ -32,7 +32,7 @@ export class HotbarMarker {
            
             if (img && this.settings.dimInactive) {
                 const inactiveImg = (<any>macro.data).img;
-                const icon: string | undefined = macro.getFlag(CONSTANTS.module.name, 'activeData')?.icon;
+                const icon: string | undefined = configuration.icon; //macro.getFlag(CONSTANTS.module.name, 'activeData')?.icon;
                 
                 img.src = marker?.active && icon ? icon : inactiveImg;
                 img.style['filter'] = marker?.active ? 'brightness(100%)' : `brightness(${this.settings.dimInactive}%)`;
