@@ -15,7 +15,7 @@ interface Message {
     error?: string
 }
 
-export declare type MarkerTypes = 'Actor' | 'Token' | 'User' | 'Macro';
+export declare type MarkerTypes = 'Token' | 'User' | 'Macro';
 
 interface Entity {
     type: MarkerTypes,
@@ -139,21 +139,6 @@ export class RemoteExecutor {
 
     private confirmUpdate(message: UpdateMarkerMessage, error?: string) {
         this.socket.emit(scope, { ...message, error, type: 'markerUpdated' });
-    }
-
-    private getFlaggable(entity: Entity): Flaggable | undefined {
-        switch(entity.type) {
-        case 'Token':
-            return canvas.tokens.get(entity.id);
-        case 'Actor':
-            return game.actors.get(entity.id);
-        case 'User':
-            return game.users.get(entity.id);
-        case 'Macro':
-            return game.macros.get(entity.id);
-        default:
-            this.logger.error('Executing as GM | Invalid type', entity.type);
-        }
     }
 
     private isExecutingGM(msg: UpdateMarkerMessage): boolean {

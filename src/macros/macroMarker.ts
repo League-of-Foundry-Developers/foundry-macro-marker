@@ -30,9 +30,7 @@ export class MacroMarker {
             return;
         }
 
-        const entity = token?.data.actorLink && token.actor
-            ? token.actor
-            : token;
+        const entity = this.getLinkedEntity(token);
 
         const flags = [ macro, this.user ];
         if (entity) flags.push(entity);
@@ -77,23 +75,15 @@ export class MacroMarker {
 
         if (trigger !== null)
             return trigger;
-            
-        let entity: Flaggable = macro;
-        const type = data?.entity?.markerType;
-        if (data?.token || type === 'Token') {
-            const token = data?.token ?? <Token>data?.entity;
-            entity = token?.data.actorLink && token.actor
-                ? token.actor
-                : token;
-        } else if (data?.user) {
-            entity = data.user;
-        } else if (data?.entity && type === 'User') {
-            entity = data.entity;
-        }
 
-        const markers = new MacroMarkerFlags(this.logger, macro);
-        const isActive = markers.getMarkers().markers[entity.id];
-        return isActive || false;
+        const token = data?.token || (data?.entity?.markerType === 'Token' ? <Token>data.entity : undefined);
+        return this.getMarker(macro, token) || false;
+    }
+
+    private getLinkedEntity(token: Token | undefined) {
+        return token?.data.actorLink && token.actor
+            ? token.actor
+            : token;
     }
 
     public toggle(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {

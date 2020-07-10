@@ -2,7 +2,6 @@ import CONSTANTS from '../utils/constants';
 import { MacroMarkerCollection } from '../marker';
 import { Logger } from '../utils/logger';
 import { MarkerTypes } from '../remoteExecutor';
-import { EntityMarkerFlags } from '../deprecated/EntityMarkerFlags';
 
 export class Identifiable {
     id: string;

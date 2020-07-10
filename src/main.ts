@@ -1,6 +1,6 @@
 import { MacroMarker } from './macros/macroMarker';
 import CONSTANTS from './utils/constants';
-import { Settings, registerSettings } from './utils/settings';
+import { registerSettings } from './utils/settings';
 import { ConsoleLogger, NotifiedLogger } from './utils/logger';
 import { MacroMarkerConfigTab } from './markerConfiguration/macroMarkerConfig';
 import { RemoteExecutor } from './remoteExecutor';
