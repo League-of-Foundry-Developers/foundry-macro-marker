@@ -16,11 +16,6 @@ interface ToggleData {
     entity?: Flaggable
 }
 
-interface ExecutionContext {
-    token?: Token,
-    actor?: Actor
-}
-
 export class MacroMarker {
     constructor(
         private logger: Logger,

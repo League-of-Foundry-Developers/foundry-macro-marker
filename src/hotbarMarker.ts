@@ -39,8 +39,8 @@ export class HotbarMarker {
                 
                 img.src = isActive && icon ? icon : inactiveImg;
                 img.style.setProperty('filter', isActive ? 'brightness(100%)' : `brightness(${this.settings.dimInactive}%)`);
-                slot.style.setProperty('z-index', img.style['z-index'] + 1);
-                if (key) key.style.setProperty('z-index', img.style['z-index'] + 2);
+                slot.style.setProperty('z-index', img.style.getPropertyValue('z-index') + 1);
+                if (key) key.style.setProperty('z-index', img.style.getPropertyValue('z-index') + 2);
             }
         }
     }

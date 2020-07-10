@@ -12,6 +12,12 @@ declare class Hotbar {
     _onHoverMacro(event: Event, ...args: unknown[]): void;
 }
 
+interface ExecutionContext {
+    token?: Token,
+    actor?: Actor,
+    macro: Macro
+}
+
 Hooks.on('init', () => {
     Extensions.addEntityMarkerTypes();
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
@@ -134,7 +140,6 @@ function renderHotbars() {
 
 Hooks.on('renderHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
 Hooks.on('renderCustomHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
-Hooks.on(`${CONSTANTS.hooks.markerUpdated}`, () => delayCallback(renderHotbars));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
 
 Hooks.on('preUpdateMacro', (macro, data) => {
@@ -150,27 +155,55 @@ Hooks.on('preUpdateMacro', (macro, data) => {
     return true;
 });
 
+Hooks.on('updateMacro', (macro, data) => {
+    if (data.flags[CONSTANTS.module.name])
+        renderHotbars();
+});
+
 Hooks.on('updateActor', (actor, data) => {
     if (data.flags?.[CONSTANTS.module.name])
         return;
 
+    const token = canvas.tokens.controlled[0];
+    if (!token || token.actor.id !== actor.id)
+        return;
+
+    triggerMarker(actor, token);
+});
+
+Hooks.on('updateToken', (scene, tokenData, updateData) => {
+    if (updateData.flags?.[CONSTANTS.module.name])
+        return;
+
+    if (!updateData.actorData)
+        return;
+
+    const token = canvas.tokens.controlled[0];
+    if (!token || token.id != tokenData._id)
+        return;
+
+    triggerMarker(token.actor, token);
+});
+
+function triggerMarker(actor: Actor, token: Token) {
     const logger = new ConsoleLogger();
     const settings = Settings._load();
-    const token = canvas.tokens.controlled[0];
     // use map, because getHotbarMacros() does not return Macro[], but { slot: number, macro: Macro }[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const macros: (Macro & Flaggable)[] = game.user.getHotbarMacros().map(slot => (<any>slot).macro).filter(x => x);
+    
     for(const macro of macros) {
-        const data = new DataFlags(logger, macro).getData();
+        const config = new DataFlags(logger, macro).getData();
         const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
         
-        if (!data.trigger) {
+        if (!config.trigger) {
             continue;
         }
         const trigger = Function(`return function(actor) {
-            ${data.trigger}
+            ${config.trigger}
         }`)();
-        const isActive = trigger.call(macro, actor);
+        const context: ExecutionContext = { macro, actor, token };
+        const isActive = trigger.call(context);
         if (typeof isActive !== 'boolean') {
             ui.notifications.error(`Trigger for macro marker on '${macro.name}' does not return a boolean value.`);
             continue;
@@ -193,4 +226,4 @@ Hooks.on('updateActor', (actor, data) => {
             marker.deactivate(macro, { entity });
         }
     }
-});
+}
