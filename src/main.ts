@@ -1,16 +1,16 @@
-import { Flaggable, DataFlags } from './flags';
+import { Flaggable, DataFlags, EntityMarkerFlags } from './flags';
 import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
 import { ConsoleLogger, NotifiedLogger } from './logger';
-import { MacroConfig } from './macroConfig';
+import { MacroMarkerConfig } from './macroMarkerConfig';
 import { MarkerCleaner } from './markerCleaner';
 import { RemoteExecutor } from './remoteExecutor';
 import { Extensions } from './foundry';
 
 declare class Hotbar {
-    _onHoverMacro(event: Event, ...args: any[]): void;
+    _onHoverMacro(event: Event, ...args: unknown[]): void;
 }
 
 Hooks.on('init', () => {
@@ -79,6 +79,8 @@ Hooks.on('ready', () => {
     RemoteExecutor.init(logger);
     window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
     window['MarkerCleaner'] = new MarkerCleaner(logger);
+    
+    MacroMarkerConfig.init();
 });
 
 const timers = {};
@@ -114,17 +116,8 @@ function renderHotbars() {
 
 Hooks.on('renderHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
 Hooks.on('renderCustomHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
-Hooks.on(`${CONSTANTS.hooks.markerUpdated}`, () => delayCallback(renderHotbars));
+// Hooks.on(`${CONSTANTS.hooks.markerUpdated}`, () => delayCallback(renderHotbars));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
-
-Hooks.on('renderMacroConfig', (macroConfig, html) => {
-    const logger = new ConsoleLogger();
-    const dataFlags = new DataFlags(logger, macroConfig.entity);
-    const data = dataFlags.getData();
-    new MacroConfig(logger, html[0]).addFields(data);
-
-    return true;
-});
 
 Hooks.on('preUpdateMacro', (macro, data) => {
     const activeData = data[CONSTANTS.module.name];
@@ -137,4 +130,45 @@ Hooks.on('preUpdateMacro', (macro, data) => {
     flags.setData(Object.assign(oldData, activeData));
 
     return true;
+});
+
+Hooks.on('updateActor', (actor, data) => {
+    if (data.flags?.[CONSTANTS.module.name])
+        return;
+
+    const logger = new ConsoleLogger();
+    const settings = Settings._load();
+    const token = canvas.tokens.controlled[0];
+    // use map, because getHotbarMacros() does not return Macro[], but { slot: number, macro: Macro }[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const macros: (Macro & Flaggable)[] = game.user.getHotbarMacros().map(slot => (<any>slot).macro).filter(x => x);
+    for(const macro of macros) {
+        const data = new DataFlags(logger, macro).getData();
+        const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
+        
+        if (!data.trigger) {
+            continue;
+        }
+        const trigger = Function(`return function(actor) {
+            ${data.trigger}
+        }`)();
+        const isActive = trigger.call(macro, actor);
+        if (typeof isActive !== 'boolean') {
+            ui.notifications.error(`Trigger for macro marker on '${macro.name}' does not return a boolean value.`);
+            continue;
+        }
+        // TODO: move this logic
+        const userFlags = new EntityMarkerFlags(logger, game.user);
+        const tokenFlags = token && new EntityMarkerFlags(logger, token);
+        const markerData = userFlags.getMarkers()[macro.id] 
+            ? { user: game.user } 
+            : tokenFlags?.getMarkers()[macro.id]
+                ? { token: token }
+                : { };
+        if (isActive) {
+            marker.activate(macro, markerData);
+        } else {
+            marker.deactivate(macro, markerData);
+        }
+    }
 });

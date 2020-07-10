@@ -1,0 +1,15 @@
+.macro-sheet .tab-content {
+  flex-grow: 1;
+}
+
+.macro-sheet .tab-content .tab {
+  height: 100%;
+}
+
+.macro-sheet .tab-content .tab .form-group {
+  flex: 0;
+}
+
+.macro-sheet .tab-content .tab .form-group.command {
+  flex: 1;
+}

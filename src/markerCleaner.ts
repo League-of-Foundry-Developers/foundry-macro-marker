@@ -1,4 +1,4 @@
-import { Flaggable, MarkerFlags } from './flags';
+import { Flaggable, EntityMarkerFlags } from './flags';
 import { Logger } from './logger';
 
 export class MarkerCleaner {
@@ -41,7 +41,7 @@ export class MarkerCleaner {
     }
 
     private _clearMarkers(macro: Macro, flaggable: Flaggable): Promise<Flaggable> {
-        const markers = new MarkerFlags(this.logger, flaggable);
+        const markers = new EntityMarkerFlags(this.logger, flaggable);
         if (!markers.getMarkers()[macro.id]) return Promise.resolve(flaggable);
 
         return markers.unsetMarker(macro.id);

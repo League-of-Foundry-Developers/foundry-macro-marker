@@ -4,6 +4,15 @@ declare global {
     interface Entity {
         markerType: MarkerTypes
     }
+    interface User {
+        markerType: MarkerTypes
+    }
+    interface PlaceableObject {
+        markerType: MarkerTypes,
+    }
+    interface Actor {
+        markerType: MarkerTypes
+    }
 }
 
 export class Extensions {

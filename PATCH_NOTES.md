@@ -1,3 +1,2 @@
-- Added rounded borders like the hotbar icons have.
-- Bug fix: update markers using GM account to prevent errors on Observer-only macros.
-
+- Move active tooltip and active icon to separate tab
+- Add character sheet trigger for linked tokens

@@ -1,4 +1,4 @@
-import { MarkerFlags, Flaggable } from './flags';
+import { Flaggable, EntityMarkerFlags } from './flags';
 import { Marker } from './marker';
 import CONSTANTS from './constants';
 import { Settings } from './settings';
@@ -14,9 +14,14 @@ interface ToggleData {
     /**
      * @deprecated use ToggleData.entity instead
      */
-    user?: Flaggable,
-    entity?: Flaggable,
+    user?: User & Flaggable,
+    entity?: (Token | User) & Flaggable, 
     colour?: string
+}
+
+interface ExecutionContext {
+    token?: Token,
+    actor?: Actor
 }
 
 export class MacroMarker {
@@ -40,7 +45,7 @@ export class MacroMarker {
         if (entity) flags.push(entity);
 
         for(const flag of flags) {
-            const marker = new MarkerFlags(this.logger, flag).getMarkers()[macro.id];
+            const marker = new EntityMarkerFlags(this.logger, flag).getMarkers()[macro.id];
             if (marker) return marker;
         }
     }
@@ -69,16 +74,21 @@ export class MacroMarker {
         return this._toggleWorldMacro(macro, colour);
     }
     
-    public isActive(macro: Macro & Flaggable, data?: { token?: Token & Flaggable, user?: Flaggable }): boolean {
-        let entity: Flaggable = macro;
-        if (data?.token)
-            entity = data.token.data.actorLink && data.token.actor
-                ? data.token.actor
-                : data.token;
-        else if (data?.user)
+    public isActive(macro: Macro & Flaggable, data?: ToggleData): boolean {
+        let entity: (Macro | User | Token | Actor) & Flaggable = macro;
+        const type = data?.entity?.constructor.name;
+        if (data?.token || type === Token.constructor.name) {
+            const token = data?.token ?? <Token>data?.entity;
+            entity = token?.data.actorLink && token.actor
+                ? token.actor
+                : token;
+        } else if (data?.user) {
             entity = data.user;
+        } else if (data?.entity && type === User.constructor.name) {
+            entity = data.entity;
+        }
 
-        const markers = new MarkerFlags(this.logger, entity);
+        const markers = new EntityMarkerFlags(this.logger, entity);
         return markers.getMarkers()[macro.id]?.active || false;
     }
 
@@ -94,13 +104,14 @@ export class MacroMarker {
             data.entity = data?.token || data?.user;
         }
 
+        const type = data?.entity?.markerType;
         // TODO: extract logic to determine what type of entity it is?
-        if (data?.entity && data.entity.constructor.name === 'Token')
+        if (data?.entity && type === 'Token')
             return this._toggleTokenMacro(macro, <Token & Flaggable>data.entity, data.colour);
-        else if(data?.entity && data.entity.constructor.name === 'User')
+        else if(data?.entity && type === 'User')
             return this._toggleUserMacro(macro, data.entity, data.colour);
-        else
-            return this._toggleWorldMacro(macro, data?.colour);
+
+        return this._toggleWorldMacro(macro, data?.colour);
     }
 
     public activate(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
@@ -165,7 +176,7 @@ export class MacroMarker {
     }
 
     private async _toggleMacro(macro: Macro, flaggable: Flaggable, colour?: string): Promise<Flaggable>{
-        const flags = new MarkerFlags(this.logger, flaggable);
+        const flags = new EntityMarkerFlags(this.logger, flaggable);
         const existingMarker: Marker | undefined = flags.getMarkers()[macro.id];
 
         // Ensure colour really is a string to prevent stack overflows (in case it's an entity)
@@ -182,6 +193,7 @@ export class MacroMarker {
                     Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);
                     return updatedFlaggable;
                 });
+
 
         // TODO: inject if it needs to be testable
         const gm = RemoteExecutor.create(this.logger);

@@ -1,5 +1,5 @@
 import { Marker } from './marker';
-import { Flaggable, MarkerFlags } from './flags';
+import { Flaggable, EntityMarkerFlags } from './flags';
 import CONSTANTS from './constants';
 import { ConsoleLogger, Logger, NotifiedLogger } from './logger';
 
@@ -81,7 +81,7 @@ export class RemoteExecutor {
                 return;
             }
             const logger = new NotifiedLogger(new ConsoleLogger());
-            const marker = new MarkerFlags(logger, flag);
+            const marker = new EntityMarkerFlags(logger, flag);
             marker.addMarker(msg.macroId, msg.marker).then(() => this.confirmUpdate(msg));
         }
     }
@@ -117,7 +117,7 @@ export class RemoteExecutor {
                 return (value) => {
                     clearTimeout(timeOut);
                     res(value);
-                }
+                };
             }
 
             this.pendingMessages[messageId] = { 
