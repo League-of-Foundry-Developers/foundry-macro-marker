@@ -62,33 +62,9 @@ export class RemoteExecutor {
         this.logger.debug('New/pending messages', message, Object.keys(this.pendingMessages));
 
         if (message.type === 'markerUpdated' && message.id in this.pendingMessages)  {
-            if (message.error)
-                this.pendingMessages[message.id].reject(message.error);
-            else
-                this.pendingMessages[message.id].resolve();
-
-            delete this.pendingMessages[message.id];
+            this.resolveUpdateMarkerRequest(message);
         } else if (message.type === 'updateMarker') {
-            const msg: UpdateMarkerMessage = <UpdateMarkerMessage>message;
-            if (!this.isExecutingGM(msg))
-                return;
-
-            const macro = game.macros.get(msg.macroId);
-            if (!macro) {
-                this.logger.error('Executing as GM | Macro not found', msg.macroId);
-                this.confirmUpdate(msg, 'Macro not found');
-            }
-            const flag = this.getFlaggable(msg.entity);
-            if (!flag) {
-                this.logger.error('Executing as GM | Entity not found', msg.entity);
-                this.confirmUpdate(msg, 'Invalid Entity');
-                return;
-            }
-            // TODO: use this when using MacroMarkerFlags in the next major version.
-            // const entity = { id: msg.entity.id, markerType: msg.entity.type };
-            const logger = new NotifiedLogger(new ConsoleLogger());
-            const marker = new MigratingMarkerFlags(logger, macro, flag);
-            marker.addMarker(flag, msg.isActive).then(() => this.confirmUpdate(msg));
+            this.processUpdateMarkerRequest(message);
         }
     }
 
@@ -133,8 +109,41 @@ export class RemoteExecutor {
 
             this.socket.emit(scope, message);
         });
-
     }
+
+    private resolveUpdateMarkerRequest(message: Message) {
+        if (message.error)
+            this.pendingMessages[message.id].reject(message.error);
+        else
+            this.pendingMessages[message.id].resolve();
+
+        delete this.pendingMessages[message.id];
+    }
+
+    private processUpdateMarkerRequest(message: Message) {
+        const msg: UpdateMarkerMessage = <UpdateMarkerMessage>message;
+        if (!this.isExecutingGM(msg))
+            return;
+
+        const macro = game.macros.get(msg.macroId);
+        if (!macro) {
+            this.logger.error('Executing as GM | Macro not found', msg.macroId);
+            this.confirmUpdate(msg, 'Macro not found');
+        }
+        const flag = this.getFlaggable(msg.entity);
+        if (!flag) {
+            this.logger.error('Executing as GM | Entity not found', msg.entity);
+            this.confirmUpdate(msg, 'Invalid Entity');
+            return;
+        }
+
+        // TODO: use this when using MacroMarkerFlags in the next major version.
+        // const entity = { id: msg.entity.id, markerType: msg.entity.type };
+        const logger = new NotifiedLogger(new ConsoleLogger());
+        const marker = new MigratingMarkerFlags(logger, macro, flag);
+        marker.addMarker(flag, msg.isActive).then(() => this.confirmUpdate(msg));
+    }
+
 
     private confirmUpdate(message: UpdateMarkerMessage, error?: string) {
         this.socket.emit(scope, { ...message, error, type: 'markerUpdated' });
