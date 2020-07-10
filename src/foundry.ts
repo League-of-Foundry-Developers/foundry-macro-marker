@@ -4,14 +4,8 @@ declare global {
     interface Entity {
         markerType: MarkerTypes
     }
-    interface User {
-        markerType: MarkerTypes
-    }
     interface PlaceableObject {
         markerType: MarkerTypes,
-    }
-    interface Actor {
-        markerType: MarkerTypes
     }
 }
 
@@ -20,7 +14,7 @@ export class Extensions {
         if (Actor.prototype['markerType']) {
             console.warn('Macro Marker | Actor already had a property or method named "markerType"');
         }
-        Actor.prototype['markerType'] = 'Actor';
+        Actor.prototype['markerType'] = 'Token'; // Actors must be saved along with Token markers.
 
         if (User.prototype['markerType']) {
             console.warn('Macro Marker | User already had a property or method named "markerType"');

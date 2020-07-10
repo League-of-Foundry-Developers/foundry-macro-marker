@@ -1,4 +1,4 @@
-import { Flaggable, DataFlags, MigratingMarkerFlags } from './flags';
+import { Flaggable, DataFlags } from './flags';
 import { HotbarMarker } from './hotbarMarker';
 import { MacroMarker } from './macroMarker';
 import CONSTANTS from './constants';
@@ -165,7 +165,7 @@ Hooks.on('updateActor', (actor, data) => {
     if (data.flags?.[CONSTANTS.module.name])
         return;
 
-    triggerMarker(actor);
+    renderHotbars();
 });
 
 Hooks.on('updateToken', (scene, tokenData, updateData) => {
@@ -175,19 +175,5 @@ Hooks.on('updateToken', (scene, tokenData, updateData) => {
     if (!updateData.actorData)
         return;
 
-    const token = canvas.tokens.get(tokenData.id);
-
-    triggerMarker(token.actor);
+    renderHotbars();
 });
-
-function triggerMarker(actor: Actor) {
-    const logger = new ConsoleLogger();
-    // use map, because getHotbarMacros() does not return Macro[], but { slot: number, macro: Macro }[]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const macros: (Macro & Flaggable)[] = game.user.getHotbarMacros().map(slot => (<any>slot).macro).filter(x => x);
-    
-    for(const macro of macros) {
-        execute(macro, actor);
-    }
-}
-

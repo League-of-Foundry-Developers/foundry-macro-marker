@@ -52,6 +52,7 @@ export class MacroMarkerFlags {
         // Markers can only be set for one type to prevent weird toggling behaviour.
         if (existingMarkers.type !== entity.markerType) {
             existingMarkers.markers = {};
+            existingMarkers.type = entity.markerType;
         }
         existingMarkers.markers[entity.id] = isActive;
         return this.setMarkers(existingMarkers);

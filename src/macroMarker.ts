@@ -107,7 +107,7 @@ export class MacroMarker {
         const type = data?.entity?.markerType;
         // TODO: extract logic to determine what type of entity it is?
         if (data?.entity && type === 'Token')
-            return this._toggleTokenMacro(macro, <Token & Flaggable>data.entity);
+            return this._toggleTokenMacro(macro, <Token>data.entity);
         else if(data?.entity && type === 'User')
             return this._toggleUserMacro(macro, data.entity);
 
