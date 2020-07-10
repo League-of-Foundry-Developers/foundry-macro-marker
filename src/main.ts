@@ -17,7 +17,7 @@ Hooks.on('init', () => {
 Hooks.on('ready', () => {
     const logger = new NotifiedLogger(new ConsoleLogger());
     RemoteExecutor.init(logger);
-    window['MacroMarker'] = new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled);
+    window['MacroMarker'] = new MacroMarker(logger, game.user, () => canvas.tokens.controlled);
     
     MacroMarkerConfigTab.init();
 });

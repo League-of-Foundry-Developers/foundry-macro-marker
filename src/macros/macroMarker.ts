@@ -22,7 +22,6 @@ interface ToggleData {
 export class MacroMarker {
     constructor(
         private logger: Logger,
-        private settings: Settings,
         private user: Flaggable,
         private listControlledTokens: () => (Token & Flaggable)[]) { }
 

@@ -18,7 +18,7 @@ export function overrideMacroHover(): void {
                 const li: HTMLElement = event.currentTarget;
                 const logger = new NotifiedLogger(new ConsoleLogger());
                 const settings = Settings._load();
-                const marker = new MacroMarker(logger, settings, game.user, () => canvas.tokens.controlled);
+                const marker = new MacroMarker(logger, game.user, () => canvas.tokens.controlled);
                 new MarkerToggler(game.macros, logger, settings, marker).showTooltip(li, canvas.tokens.controlled[0]);
             }
         };

@@ -9,13 +9,12 @@ import CONSTANTS from './utils/constants';
 
 export function renderMarkers(hotbar: HTMLElement): boolean {
     const logger = new NotifiedLogger(new ConsoleLogger());
-    const settings = Settings._load();
     const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
     const hotbarMarker = new MarkerToggler(
         game.macros,
         logger,
-        settings,
-        new MacroMarker(logger, Settings._load(), game.user, () => canvas.tokens.controlled));
+        Settings._load(),
+        new MacroMarker(logger, game.user, () => canvas.tokens.controlled));
 
     hotbarMarker.showMarkers(hotbar, token);
 
