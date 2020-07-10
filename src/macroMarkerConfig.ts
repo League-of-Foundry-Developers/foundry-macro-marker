@@ -1,6 +1,7 @@
 import { Logger, ConsoleLogger } from './logger';
 import { DataFlags, Flaggable } from './flags';
 import CONSTANTS from './constants';
+import { Settings } from './settings';
 
 export interface MarkerConfiguration {
     icon?: string,
@@ -10,21 +11,20 @@ export interface MarkerConfiguration {
 }
 
 export class MacroMarkerConfig {
-    constructor(protected logger: Logger, protected html: HTMLElement) { }
-
     public static init(): void {
         Hooks.on('renderMacroConfig', (_, jhtml, data) => { 
             const macro = game.macros.get(data.entity._id);
-            MacroMarkerConfig.renderConfig(jhtml[0], macro);
+            MacroMarkerConfig.renderConfig(Settings._load(), jhtml[0], macro);
             return true;
         });
     }
     
-    private static async renderConfig(html: HTMLElement, macro: Macro & Flaggable) {
+    private static async renderConfig(settings: Settings, html: HTMLElement, macro: Macro & Flaggable) {
         const logger = new ConsoleLogger();
         const dataFlags = new DataFlags(logger, macro);
         const data: MarkerConfiguration = dataFlags.getData();
         data['module'] = CONSTANTS.module.name;
+        data.colour = data.colour || '#ffffff';
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);
         // renderTemplate returns string instead of HTMLElement...

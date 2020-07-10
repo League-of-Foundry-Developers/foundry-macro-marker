@@ -21,7 +21,10 @@ export class HotbarMarker {
 
             if (isActive) {
                 slot.classList.add('macro-marker');
-                slot.style.setProperty('color', configuration?.colour ? configuration.colour : 'var(--macro-marker-color)');
+                const colour = configuration?.colour && configuration.colour !== '#000000'
+                    ? configuration.colour
+                    : 'var(--macro-marker-color)';
+                slot.style.setProperty('color', colour);
             } else {
                 slot.classList.remove('macro-marker');
                 slot.style.setProperty('color', 'black'); //set color back to default just to be sure

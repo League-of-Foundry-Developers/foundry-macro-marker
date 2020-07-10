@@ -30,9 +30,12 @@ Hooks.on('init', () => {
         hint: 'The default colour for active macros. Must be a valid CSS colour (e.g. hex, rgba or named).',
         scope: 'world',
         config: true,
-        default: 'white',
+        default: '#ff0000',
         type: String,
-        onChange: renderHotbars
+        onChange: colour => { 
+            updateColour(colour);
+            renderHotbars();
+        }
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.borderWidth, {
@@ -80,6 +83,23 @@ Hooks.on('ready', () => {
     
     MacroMarkerConfig.init();
 });
+
+function updateColour(colour: string) {
+    if (colour.startsWith('#'))
+        return colour;
+
+    const ctx = document.createElement('canvas')?.getContext('2d');
+    if (!ctx)
+        return;
+
+    ctx.fillStyle = colour;
+    const newColour = ctx.fillStyle;
+    if (newColour.startsWith('#'))
+        game.settings.set(CONSTANTS.module.name, Settings.keys.defaultColour, newColour);
+    else
+        ui.notifications.warn(`Macro Marker: Default colour '${colour}' is not a valid colour.`);
+    return colour;
+}
 
 const timers = {};
 function delayCallback(callback: (...args: unknown[]) => boolean, ...args: unknown[]) {
