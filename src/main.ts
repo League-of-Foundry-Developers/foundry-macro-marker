@@ -5,7 +5,7 @@ import { ConsoleLogger, NotifiedLogger } from './utils/logger';
 import { MacroMarkerConfigTab } from './markerConfiguration/macroMarkerConfig';
 import { RemoteExecutor } from './remoteExecutor';
 import { Extensions } from './utils/foundry';
-import { renderHotbars, renderMarkers, saveMacroConfiguration, delayCallback } from './controller';
+import { renderHotbars, renderMarkers, saveMacroConfiguration, delayCallback, removeTokenFlags } from './controller';
 import { overrideMacroHover } from './hotbar/overrides';
 
 Hooks.on('init', () => {
@@ -56,4 +56,18 @@ Hooks.on('updateToken', (scene, tokenData, updateData) => {
         return;
 
     delayCallback(renderHotbars);
+});
+
+Hooks.on('preDeleteToken', (scene, data) => {
+    if (!game.user.isGM) return;
+    if (game.users.filter(u => u.active && u.isGM)[0].id !== game.user.id) return;
+
+    removeTokenFlags(data._id);
+});
+
+Hooks.on('preDeleteActor', (actor) => {
+    if (!game.user.isGM) return;
+    if (game.users.filter(u => u.active && u.isGM)[0].id !== game.user.id) return;
+
+    removeTokenFlags(actor.id);
 });

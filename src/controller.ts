@@ -1,4 +1,4 @@
-import { Flaggable } from './macros/macroMarkerFlags';
+import { Flaggable, MacroMarkerFlags } from './macros/macroMarkerFlags';
 import { MarkerToggler } from './hotbar/markerToggler';
 import { MacroMarker } from './macros/macroMarker';
 import { Settings } from './utils/settings';
@@ -59,3 +59,14 @@ export function delayCallback(callback: (...args: unknown[]) => boolean, ...args
     timers[callback.name] = window.setTimeout(() => callback(...args), 100);
 }
 
+export async function removeTokenFlags(id: string): Promise<void> {
+    for(const macro of game.macros.entities) {
+        const flags = new MacroMarkerFlags(new ConsoleLogger(), macro);
+        const markers = flags.getMarkers();
+        if (!(id in markers.markers))
+            continue;
+        
+        delete markers.markers[id];
+        await flags.setMarkers(markers);
+    }
+}
