@@ -5,16 +5,16 @@ Macro Hotbar will now show a warning when the following functions are used:
 - MacroMarker.toggleUserMacro
 - MacroMarker.toggleTokenMacro
 
-- MacroMarker.toggle(macro, { token })
-- MacroMarker.toggle(macro, { user })
-- MacroMarker.activate(macro, { token })
-- MacroMarker.deactivate(macro, { user })
+- MacroMarker.toggle(macro, { token: token })
+- MacroMarker.toggle(macro, { user: user })
+- MacroMarker.activate(macro, { token: token })
+- MacroMarker.deactivate(macro, { user: user })
 
 instead the following function (signatures) should be used:
 
-- MacroMarker.toggle(macro, { entity })
-- MacroMarker.activate(macro, { entity })
-- MacroMarker.deactivate(macro, { entity })
+- MacroMarker.toggle(macro, { entity: token|user }) 
+- MacroMarker.activate(macro, { entity: token|user })
+- MacroMarker.deactivate(macro, { entity: token|user })
 
 **Breaking changes:**
 The following functionality has been changed immediately.
@@ -27,7 +27,7 @@ However, I strongly discourage using them, because they might change again in a 
 - Because markers are now stored only on the macro. The flag has the following structure:
 ```js
 {
-    type: 'Token'|'Actor'|'User'|'Macro',
+    type: 'Token'|'User'|'Macro',
     [entityId]: boolean | undefined
 }
 ```
