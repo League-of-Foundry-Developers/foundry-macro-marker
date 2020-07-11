@@ -22,6 +22,7 @@ Hooks.on('ready', () => {
     MacroMarkerConfigTab.init();
 });
 
+Hooks.on('canvasReady', () => delayCallback(renderHotbars));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
 Hooks.on('renderHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
 Hooks.on('renderCustomHotbar', (_, hotbar) => delayCallback(renderMarkers, hotbar[0]));
