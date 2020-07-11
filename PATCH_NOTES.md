@@ -35,6 +35,7 @@ However, I strongly discourage using them, because they might change again in a 
 **New features:**
 - Add condition-based toggling. This condition is checked on sheet updates, selecting tokens and when the hotbar renders.
 - Move active tooltip and active icon to separate tab
+- Added compendium with examples for both trigger and flag-based toggles
 
 **Fixed bugs:**
 - Marker does not show when both players are looking at the same marker when it is (de)activated.

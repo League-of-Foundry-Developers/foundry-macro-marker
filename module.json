@@ -1,7 +1,7 @@
 {
     "name": "macro-marker",
     "title": "Macro Marker",
-    "description": "<p>Allows players and GMs to mark macros as active giving them a coloured border.</p>",
+    "description": "<p>Allows players and GMs to mark macros as active giving them a coloured border.</p><p>Markers can now also be toggled automatically based on any condition or script!</p>",
     "author": "Stan Janssen",
     "version": "{{ version }}",
     "minimumCoreVersion": "0.6.0",

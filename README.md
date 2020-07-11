@@ -60,14 +60,14 @@ You can toggle the state on one of three entities:
 2. Token (or linked actor)
 3. User
 
-### Macro
+#### Macro
 Toggling the state on the macro will make it visible for every user, irregardless of the token they have selected.
 
 ```js
 MacroMarker.toggle(macro);
 ```
 
-### Token
+#### Token
 Toggling the state on the token will make it visible for whoever controls the token. If the token is linked, the state will be synchronized across all other linked tokens of the same actor.
 
 ```js
@@ -75,7 +75,7 @@ let token = canvas.tokens.controlled[0];
 MacroMarker.toggle(macro, { entity: token });
 ```
 
-### User
+#### User
 Toggling the state on the user will make it visible for only that user irregardless of the token they have selected.
 
 ```js
@@ -83,9 +83,8 @@ let user = game.user;
 MacroMarker.toggle(macro, { entity: user });
 ```
 
-## Manual toggles
+### Manual toggles
 Alternatively, you can manually activate and deactivate it, using the same function signature as the `toggle`  function.
-
 
 ```js
 MacroMarker.activate(macro);
@@ -95,7 +94,7 @@ MacroMarker.activate(macro, { entity: user });
 MacroMarker.deactivate(macro, { entity: token });
 ```
 
-## Checking the state
+### Checking the state
 Finally, you can also check the state:
 
 ```js
@@ -104,5 +103,5 @@ MacroMarker.isActive(macro, { entity: token });
 MacroMarker.isActive(macro, { entity: user });
 ```
 
-## Marker configuration
+### Marker configuration
 You can configure an alternative tooltip, icon and colour when editing the macro.
