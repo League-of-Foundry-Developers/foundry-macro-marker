@@ -7,6 +7,8 @@ Using this Foundry VTT module, you can mark macros as active giving them a colou
 
 Dimming the inactive macros is configurable in the module settings.
 
+> This module is 100% compatible with @Norc's amazing [Custom Hotbar](https://foundryvtt.com/packages/custom-hotbar/)!
+
 ### Coloured active macros
 <p align="center">
 <img src="./img/mm-dim.png" width="500px" />
@@ -16,7 +18,7 @@ Dimming the inactive macros is configurable in the module settings.
 
 ### Alternative icon and tooltip
 <p align="center">
-<img src="./img/mm-marker-config.png" width="500px" />
+<img src="./img/mm-active-marker-config.png" width="500px" />
 </p>
 <p align="center">
 <img src="./img/mm-tooltip.gif" width="500px" />
@@ -67,12 +69,25 @@ Toggling the state on the macro will make it visible for every user, irregardles
 MacroMarker.toggle(macro);
 ```
 
+> **NB: `macro` is a variable pointing to a macro.** In general you can use `this` instead inside your own macros or you can toggle another macro by finding it in `game.macros`. For example `let macro = game.macros.getName('Toggle Rage');`.
+> The script macro then becomes this to toggle itself: 
+> ```js
+> MacroMarker.toggle(this);
+> ```
+> Or this to toggle another macro:
+> ```js
+> let macro = game.macros.getName('Toggle Rage');
+> MacroMarker.toggle(macro);
+> ```
+
+
 #### Token
 Toggling the state on the token will make it visible for whoever controls the token. If the token is linked, the state will be synchronized across all other linked tokens of the same actor.
 
 ```js
 let token = canvas.tokens.controlled[0];
-MacroMarker.toggle(macro, { entity: token });
+if (token)
+  MacroMarker.toggle(macro, { entity: token });
 ```
 
 #### User
@@ -105,3 +120,7 @@ MacroMarker.isActive(macro, { entity: user });
 
 ### Marker configuration
 You can configure an alternative tooltip, icon and colour when editing the macro.
+
+### More examples
+You can find more examples in the included compendium _Macro Marker Examples_.
+
