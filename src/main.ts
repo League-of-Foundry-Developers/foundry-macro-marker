@@ -11,16 +11,19 @@ import { overrideMacroHover } from './hotbar/overrides';
 Hooks.on('init', () => {
     Extensions.addEntityMarkerTypes();
     registerSettings();
-    overrideMacroHover();
 });
 
 Hooks.on('ready', () => {
     const logger = new NotifiedLogger(new ConsoleLogger());
+    
+    overrideMacroHover((<any>ui).hotbar);
+
+    MacroMarkerConfigTab.init();
     RemoteExecutor.init(logger);
     window['MacroMarker'] = new MacroMarker(logger, game.user, () => canvas.tokens.controlled);
-    
-    MacroMarkerConfigTab.init();
 });
+
+Hooks.once('renderCustomHotbar', () => overrideMacroHover((<any>ui).customHotbar));
 
 Hooks.on('canvasReady', () => delayCallback(renderHotbars));
 Hooks.on('controlToken', () => delayCallback(renderHotbars));
