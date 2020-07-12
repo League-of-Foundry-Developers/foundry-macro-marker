@@ -1,41 +1,6 @@
-**Deprecations:**
-Macro Hotbar will now show a warning when the following functions are used:
+**Fix hotbar override**
 
-- MacroMarker.toggleMacro
-- MacroMarker.toggleUserMacro
-- MacroMarker.toggleTokenMacro
+Extending the hotbar class lead to broken hooks (render instead of
+renderHotbar). It's safer to monkey patch the hover callback.
 
-- MacroMarker.toggle(macro, { token: token })
-- MacroMarker.toggle(macro, { user: user })
-- MacroMarker.activate(macro, { token: token })
-- MacroMarker.deactivate(macro, { user: user })
-
-instead the following function (signatures) should be used:
-
-- MacroMarker.toggle(macro, { entity: token|user }) 
-- MacroMarker.activate(macro, { entity: token|user })
-- MacroMarker.deactivate(macro, { entity: token|user })
-
-**Breaking changes:**
-The following functionality has been changed immediately.
-- Marker colour is no longer part of the individual markers, but instead part of the macro configuration and stored in 'macro-marker.activeData'
-
-Despite being part of the inner workings, the following features are listed here just in case you do depend on them.
-However, I strongly discourage using them, because they might change again in a next stable version.
-
-- Markers are no longer stored in the user, token or actor flags. Instead they are stored in the macro under 'macro-marker.markers'.
-- Because markers are now stored only on the macro. The flag has the following structure:
-```js
-{
-    type: 'Token'|'User'|'Macro',
-    [entityId]: boolean | undefined
-}
-```
-
-**New features:**
-- Add condition-based toggling. This condition is checked on sheet updates, selecting tokens and when the hotbar renders.
-- Move active tooltip and active icon to separate tab
-- Added compendium with examples for both trigger and flag-based toggles
-
-**Fixed bugs:**
-- Marker does not show when both players are looking at the same marker when it is (de)activated.
+The same needs to be done for Custom Hotbar, if present.
