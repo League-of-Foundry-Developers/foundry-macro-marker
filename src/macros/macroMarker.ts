@@ -32,14 +32,15 @@ export class MacroMarker {
 
         const entity = this.getLinkedEntity(token);
 
-        const flags = [ macro, this.user ];
-        if (entity) flags.push(entity);
-
-        for(const flag of flags) {
-            const collection = new MacroMarkerFlags(this.logger, macro).getMarkers();
-            if (collection.markers[flag.id]) {
-                return collection.markers[flag.id];
-            }
+        // TODO: refactor to get rid of the switch
+        const collection = new MacroMarkerFlags(this.logger, macro).getMarkers();
+        switch(collection.type) {
+        case 'Macro':
+            return collection.markers[macro.id];
+        case 'Token':
+            return entity && collection.markers[entity.id];
+        case 'User':
+            return collection.markers[this.user.id];
         }
     }
 
@@ -48,7 +49,7 @@ export class MacroMarker {
      * Will be removed in v1.1.0
      */
     async toggleTokenMacro(macro: Macro, token: Token & Flaggable): Promise<Flaggable> {
-        this.logger.warn('toggleTokenMacro is deprecated and will soon be removed. Use toggle instead.');
+        this.logger.warn('toggleTokenMacro is deprecated and will soon be removed. Use `MacroMarker.toggle(macro, { entity: token })` instead.');
         return this._toggleTokenMacro(macro, token);
     }
 
@@ -57,7 +58,7 @@ export class MacroMarker {
      * Will be removed in v1.1.0
      */
     async toggleUserMacro(macro: Macro, user: Flaggable): Promise<Flaggable> {
-        this.logger.warn('toggleUserMacro is deprecated and will soon be removed. Use toggle instead.');
+        this.logger.warn('toggleUserMacro is deprecated and will soon be removed. Use `MacroMarker.toggle(macro, { entity: user })` instead.');
         return this._toggleUserMacro(macro, user);
     }
 
@@ -66,7 +67,7 @@ export class MacroMarker {
      * Will be removed in v1.1.0
      */
     async toggleMacro(macro: Macro & Flaggable): Promise<Flaggable> {
-        this.logger.warn('toggleMacro is deprecated and will soon be removed. Use toggle instead.');
+        this.logger.warn('toggleMacro is deprecated and will soon be removed. Use `MacroMarker.toggle(macro)` instead.');
         return this._toggleWorldMacro(macro);
     }
     
@@ -80,19 +81,13 @@ export class MacroMarker {
         return this.getMarker(macro, token) || false;
     }
 
-    private getLinkedEntity(token: Token | undefined) {
-        return token?.data.actorLink && token.actor
-            ? token.actor
-            : token;
-    }
-
     public toggle(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
         if (data?.token && data.user) {
             this.logger.warn('Markers cannot be set on both tokens and users.');
             Promise.reject();
         }
         if (data?.token || data?.user) {
-            this.logger.warn('`toggle(macro, { token } and { user })` are deprecated and will soon be removed. Please use `toggle(macro, { entity: token } and { entity: user })` instead.');
+            this.logger.warn('`toggle(macro, { token } and { user })` are deprecated and will soon be removed. Please use `MacroMarker.toggle(macro, { entity: token })` or `MacroMarker.toggle(macro, { entity: user })` instead.');
         }
         if (data && !data?.entity) {
             data.entity = data?.token || data?.user;
@@ -122,7 +117,13 @@ export class MacroMarker {
         return this.toggle(macro, data);
     }
 
-    async _toggleTokenMacro(macro: Macro, token: Token & Flaggable): Promise<Flaggable> {
+    private getLinkedEntity(token: Token | undefined) {
+        return token?.data.actorLink && token.actor
+            ? token.actor
+            : token;
+    }
+
+    private async _toggleTokenMacro(macro: Macro, token: Token & Flaggable): Promise<Flaggable> {
         if (!macro) this.logger.error('Toggle Token | Macro is undefined.');
         if (!token) this.logger.error('Toggle Token | Token is undefined.');
         if (!token || !macro) return Promise.reject();
@@ -134,7 +135,7 @@ export class MacroMarker {
         return this._toggleMacro(macro, entity);
     }
 
-    async _toggleUserMacro(macro: Macro, user: Flaggable): Promise<Flaggable> {
+    private async _toggleUserMacro(macro: Macro, user: Flaggable): Promise<Flaggable> {
         if (!macro) this.logger.error('Toggle User | Macro is undefined.');
         if (!user) this.logger.error('Toggle User | User is undefined.');
         if (!user || !macro) return Promise.reject();
@@ -142,7 +143,7 @@ export class MacroMarker {
         return this._toggleMacro(macro, user);
     }
 
-    async _toggleWorldMacro(macro: Macro & Flaggable): Promise<Flaggable> {
+    private async _toggleWorldMacro(macro: Macro & Flaggable): Promise<Flaggable> {
         if (!macro) {
             this.logger.error('Toggle Macro | Macro is undefined.'); 
             return Promise.reject();
