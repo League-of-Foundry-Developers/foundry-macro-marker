@@ -6,6 +6,8 @@ import { Logger } from '../utils/logger';
 import { MarkerConfiguration } from '../markerConfiguration/markerConfiguration';
 
 export class MarkerToggler {
+    private readonly markerClass = 'macro-marker';
+
     constructor(private macros: Map<string, Macro>, private logger: Logger, private settings: Settings, private marker: MacroMarker) { }
 
     showMarkers(hotbar: HTMLElement, token?: Token): void {
@@ -64,7 +66,7 @@ export class MarkerToggler {
     }
 
     private hideMarker(macro: Macro, slot: HTMLElement, img?: HTMLImageElement, key?: HTMLElement) {
-        slot.classList.remove('macro-marker');
+        slot.classList.remove(this.markerClass);
         slot.style.setProperty('color', 'black'); //set color back to default just to be sure
 
         if (img) {
@@ -75,7 +77,9 @@ export class MarkerToggler {
     }
 
     private showMarker(macro: Macro, slot: HTMLElement, configuration: MarkerConfiguration, img?: HTMLImageElement, key?: HTMLElement) {
-        slot.classList.add('macro-marker');
+        if (this.isActiveSlot(slot)) return;
+
+        slot.classList.add(this.markerClass);
 
         const colour = configuration?.colour && configuration.colour !== '#000000'
             ? configuration.colour
@@ -103,6 +107,10 @@ export class MarkerToggler {
         document.documentElement.style.setProperty('--macro-marker-width', this.settings.borderWidth + 'px');
         document.documentElement.style.setProperty('--macro-marker-speed', this.settings.animationSpeed + 's');
         document.documentElement.style.setProperty('--macro-marker-color', this.settings.defaultColour);
+    }
+
+    private isActiveSlot(slot: HTMLElement) {
+        return slot.classList.contains(this.markerClass);
     }
 
 }

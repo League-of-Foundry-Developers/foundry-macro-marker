@@ -1,15 +1,17 @@
+.macro-sheet .tabs,
+.macro-sheet .tab > *:not(.stacked) {
+  flex: 0;
+}
+
 .macro-sheet .tab-content {
   flex-grow: 1;
 }
 
-.macro-sheet .tab-content .tab {
+.macro-sheet .tab {
   height: 100%;
 }
 
-.macro-sheet .tab-content .tab .form-group {
-  flex: 0;
+.macro-sheet .form-group.macro-marker-trigger textarea {
+  height: calc(100% - 26px);
 }
-
-.macro-sheet .tab-content .tab .form-group.command {
-  flex: 1;
-}
+ 

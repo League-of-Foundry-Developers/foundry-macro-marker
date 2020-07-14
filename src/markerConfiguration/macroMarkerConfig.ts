@@ -20,6 +20,8 @@ export class MacroMarkerConfigTab {
         const data: MarkerConfiguration = dataFlags.getData();
         data['module'] = CONSTANTS.module.name;
         data.colour = data.colour || settings.defaultColour;
+        data.icon = data.icon || (<any>macro.data).img;
+        data.tooltip = data.tooltip || (<any>macro.data).name;
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);
         // renderTemplate returns string instead of HTMLElement...
@@ -49,7 +51,7 @@ export class MacroMarkerConfigTab {
         macroTab.classList.add('tab', 'flexcol');
         macroTab.setAttribute('data-tab', 'macro');
 
-        const macroInputs = html.querySelectorAll('.form-group');
+        const macroInputs = html.querySelectorAll('form>*');
         for(const macroInput of macroInputs) {
             macroTab.appendChild(macroInput);
         }
@@ -61,17 +63,20 @@ export class MacroMarkerConfigTab {
 
         content.append(macroTab, markerTab);
 
-        html.querySelector('.sheet-header')?.after(nav);
-        nav.after(content);
+        html.querySelector('form')?.append(content);
+        html.querySelector('form')?.before(nav);
 
         const tabs = new TabsV2({navSelector: '.tabs', contentSelector: '.tab-content', initial: 'macro', callback: () => { /* */ } });
         tabs.bind(html);
 
-        // TODO: revive file picker v__v
-        const icon = <HTMLElement>markerTab.querySelector(`input[name="${CONSTANTS.module.name}.icon"]`);
-        const fileBrowser = FilePicker.fromButton(icon, {});
-        icon.addEventListener('focus', () => {
+        const iconInput = <HTMLInputElement>markerTab.querySelector('input[type="hidden"]');
+        const iconImg = <HTMLImageElement>markerTab.querySelector('.sheet-header img');
+        const fileBrowser = FilePicker.fromButton(iconInput, {});
+        iconImg.addEventListener('click', () => {
             fileBrowser.render(true);
+        });
+        iconInput.addEventListener('change', () => {
+            iconImg.src = iconInput.value;
         });
     }
 }

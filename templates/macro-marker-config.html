@@ -1,19 +1,20 @@
-<div class="form-group">
-    <label>Active tooltip:</label>
-    <input type="text" name="{{ module }}.tooltip" value="{{ tooltip }}" />
-</div>
-
-<div class="form-group">
-    <label>Active icon:</label>
-    <input type="text" name="{{ module }}.icon" value="{{ icon }}" data-target="{{ module }}.icon" data-type="image" />
-</div>
+<header class="sheet-header">
+    <img src="{{ icon }}" data-edit="{{ module }}.icon" height="64" width="64" title="Active Icon">
+    <input type="hidden" name="{{ module }}.icon" value="{{ icon }}" data-target="{{ module }}.icon" data-type="image" />
+    <h1><input name="{{ module }}.tooltip" type="text" value="{{ tooltip }} " placeholder="Active Tooltip" title="Active Tooltip"></h1>
+</header>
 
 <div class="form-group">
     <label>Border colour:</label>
     <input type="color" name="{{ module }}.colour" value="{{ colour }}" />
 </div>
 
-<div class="form-group stacked command">
+<div class="form-group stacked command macro-marker-trigger">
     <label>Activate marker when:</label>
     <textarea name="{{ module }}.trigger">{{ trigger }}</textarea>
 </div>
+
+<footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-save"></i> Save Macro</button>
+    <button class="execute" type="button"><i class="fas fa-dice-d20"></i> Execute Macro</button>
+</footer>
