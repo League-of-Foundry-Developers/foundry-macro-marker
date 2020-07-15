@@ -9,12 +9,16 @@ export class MacroMarkerConfigTab {
     public static init(): void {
         Hooks.on('renderMacroConfig', (_, jhtml, data) => { 
             const macro = game.macros.get(data.entity._id);
-            MacroMarkerConfigTab.renderConfig(Settings._load(), jhtml[0], macro);
+            const dialog: HTMLElement = jhtml[0];
+            const formParent = dialog.tagName.toLowerCase() === 'form' ? dialog.parentElement : dialog;
+            if (formParent)
+                MacroMarkerConfigTab.renderConfig(Settings._load(), formParent, macro);
+
             return true;
         });
     }
     
-    private static async renderConfig(settings: Settings, html: HTMLElement, macro: Macro & Flaggable) {
+    private static async renderConfig(settings: Settings, formParent: HTMLElement, macro: Macro & Flaggable) {
         const logger = new ConsoleLogger();
         const dataFlags = new MarkerConfigurationFlags(logger, macro);
         const data: MarkerConfiguration = dataFlags.getData();
@@ -25,10 +29,10 @@ export class MacroMarkerConfigTab {
 
         const template = await renderTemplate('modules/macro-marker/templates/macro-marker-config.html', data);
         // renderTemplate returns string instead of HTMLElement...
-        MacroMarkerConfigTab.addTab(html, <string><unknown>template);
+        MacroMarkerConfigTab.addTab(formParent, <string><unknown>template);
     }
 
-    private static addTab(html: HTMLElement, template: string) {
+    private static addTab(formParent: HTMLElement, template: string) {
         const nav = document.createElement('nav');
         nav.classList.add('tabs');
 
@@ -51,7 +55,7 @@ export class MacroMarkerConfigTab {
         macroTab.classList.add('tab', 'flexcol');
         macroTab.setAttribute('data-tab', 'macro');
 
-        const macroInputs = html.querySelectorAll('form>*');
+        const macroInputs = formParent.querySelectorAll('form>*');
         for(const macroInput of macroInputs) {
             macroTab.appendChild(macroInput);
         }
@@ -63,11 +67,11 @@ export class MacroMarkerConfigTab {
 
         content.append(macroTab, markerTab);
 
-        html.querySelector('form')?.append(content);
-        html.querySelector('form')?.before(nav);
+        formParent.querySelector('form')?.append(content);
+        formParent.querySelector('form')?.before(nav);
 
         const tabs = new TabsV2({navSelector: '.tabs', contentSelector: '.tab-content', initial: 'macro', callback: () => { /* */ } });
-        tabs.bind(html);
+        tabs.bind(formParent);
 
         const iconInput = <HTMLInputElement>markerTab.querySelector('input[type="hidden"]');
         const iconImg = <HTMLImageElement>markerTab.querySelector('.sheet-header img');

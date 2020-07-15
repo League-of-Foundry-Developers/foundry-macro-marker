@@ -8,11 +8,13 @@ export class MarkerConfigurationFlags {
     constructor(private logger: Logger, private macro: Flaggable) { }
 
     getData(): MarkerConfiguration {
-        return this.macro.getFlag(CONSTANTS.module.name, this.key) || {};
+        // duplicate to prevent changing the data in the same reference
+        // Foundry will not update data that is the same on the entity
+        const flags: MarkerConfiguration = this.macro.getFlag(CONSTANTS.module.name, this.key) || {};
+        return duplicate(flags);
     }
 
     setData(data: MarkerConfiguration): Promise<Flaggable> {
-        return this.macro.unsetFlag(CONSTANTS.module.name, this.key)
-            .then(entity => entity.setFlag(CONSTANTS.module.name, this.key, data));
+        return this.macro.setFlag(CONSTANTS.module.name, this.key, data);
     }
 }
