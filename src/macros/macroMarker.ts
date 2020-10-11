@@ -26,7 +26,7 @@ export class MacroMarker {
 
     getMarker(macro: Macro & Flaggable, token?: Token & Flaggable): boolean | undefined {
         if (!macro) {
-            this.logger.error('Get Marker | Macro is undefined.'); 
+            this.logger.error('Get Marker | Macro is undefined.');
             return;
         }
 
@@ -70,8 +70,13 @@ export class MacroMarker {
         this.logger.warn('toggleMacro is deprecated and will soon be removed. Use `MacroMarker.toggle(macro)` instead.');
         return this._toggleWorldMacro(macro);
     }
-    
+
     public isActive(macro: Macro & Flaggable, data?: ToggleData): boolean {
+        if (!macro) {
+            this.logger.warn('IsActive | macro is undefined');
+            return false;
+        }
+
         const trigger = this.evaluateTrigger(macro);
 
         if (trigger !== null)
@@ -82,6 +87,11 @@ export class MacroMarker {
     }
 
     public toggle(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
+        if (!macro) {
+            this.logger.warn('Toggle | macro is undefined');
+            return Promise.reject();
+        }
+
         if (data?.token && data.user) {
             this.logger.warn('Markers cannot be set on both tokens and users.');
             Promise.reject();
@@ -104,6 +114,11 @@ export class MacroMarker {
     }
 
     public activate(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
+        if (!macro) {
+            this.logger.warn('Activate | macro is undefined');
+            return Promise.reject();
+        }
+
         if (this.isActive(macro, data))
             return Promise.resolve(macro);
 
@@ -111,6 +126,11 @@ export class MacroMarker {
     }
 
     public deactivate(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
+        if (!macro) {
+            this.logger.warn('Deactivate | macro is undefined');
+            return Promise.reject();
+        }
+
         if (!this.isActive(macro, data))
             return Promise.resolve(macro);
 
@@ -145,7 +165,7 @@ export class MacroMarker {
 
     private async _toggleWorldMacro(macro: Macro & Flaggable): Promise<Flaggable> {
         if (!macro) {
-            this.logger.error('Toggle Macro | Macro is undefined.'); 
+            this.logger.error('Toggle Macro | Macro is undefined.');
             return Promise.reject();
         }
 
@@ -177,7 +197,7 @@ export class MacroMarker {
     private evaluateTrigger(macro: Macro): boolean | null {
         const config = new MarkerConfigurationFlags(this.logger, macro).getData();
         const selectedToken = this.listControlledTokens()[0];
-            
+
         if (!config.trigger) {
             return null;
         }

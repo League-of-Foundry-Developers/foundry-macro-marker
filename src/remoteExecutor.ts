@@ -88,7 +88,7 @@ export class RemoteExecutor {
                 id: messageId,
                 forGM: executingGM
             };
-            
+
             const timeOut = setTimeout(() => {
                 this.logger.error('Remote Execution | No response received after time-out.', messageId);
                 delete this.pendingMessages[messageId];
@@ -102,7 +102,7 @@ export class RemoteExecutor {
                 };
             }
 
-            this.pendingMessages[messageId] = { 
+            this.pendingMessages[messageId] = {
                 resolve: clearRes(resolve),
                 reject: clearRes(reject)
             };
@@ -129,6 +129,7 @@ export class RemoteExecutor {
         if (!macro) {
             this.logger.error('Executing as GM | Macro not found', msg.macroId);
             this.confirmUpdate(msg, 'Macro not found');
+            return;
         }
 
         const entity = { id: msg.entity.id, markerType: msg.entity.type };
