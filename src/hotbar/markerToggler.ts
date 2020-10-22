@@ -52,8 +52,9 @@ export class MarkerToggler {
     }
 
     private updateMacroAppearance(macro: Macro, slot: HTMLElement, selectedToken?: Token) {
-        const isActive = this.marker.isActive(macro, { entity: selectedToken });
+        const { isActive, colour } = this.marker.isActiveWithColour(macro, { entity: selectedToken });
         const configuration = new MarkerConfigurationFlags(this.logger, macro).getData();
+        if (colour) configuration.colour = colour;
 
         const img = <HTMLImageElement>slot.querySelector('img.macro-icon');
         const key = <HTMLElement>slot.querySelector('span.macro-key');
@@ -77,9 +78,8 @@ export class MarkerToggler {
     }
 
     private showMarker(macro: Macro, slot: HTMLElement, configuration: MarkerConfiguration, img?: HTMLImageElement, key?: HTMLElement) {
-        if (this.isActiveSlot(slot)) return;
-
-        slot.classList.add(this.markerClass);
+        if (!slot.classList.contains(this.markerClass))
+            slot.classList.add(this.markerClass);
 
         const colour = configuration?.colour && configuration.colour !== '#000000'
             ? configuration.colour
@@ -89,8 +89,8 @@ export class MarkerToggler {
 
         if (img) {
             const inactiveImg = (<any>macro.data).img;
-            const icon: string | undefined = configuration.icon; //macro.getFlag(CONSTANTS.module.name, 'activeData')?.icon;
-                
+            const icon: string | undefined = configuration.icon;
+
             img.src = icon ? icon : inactiveImg;
             img.style.setProperty('filter', 'brightness(100%)');
             this.fixSlotZIndex(slot, img, key);
@@ -108,9 +108,4 @@ export class MarkerToggler {
         document.documentElement.style.setProperty('--macro-marker-speed', this.settings.animationSpeed + 's');
         document.documentElement.style.setProperty('--macro-marker-color', this.settings.defaultColour);
     }
-
-    private isActiveSlot(slot: HTMLElement) {
-        return slot.classList.contains(this.markerClass);
-    }
-
 }

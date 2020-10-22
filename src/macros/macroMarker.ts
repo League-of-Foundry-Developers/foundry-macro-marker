@@ -72,9 +72,13 @@ export class MacroMarker {
     }
 
     public isActive(macro: Macro & Flaggable, data?: ToggleData): boolean {
+        return this.isActiveWithColour(macro, data).isActive;
+    }
+
+    public isActiveWithColour(macro: Macro & Flaggable, data?: ToggleData): { isActive: boolean, colour?: string } {
         if (!macro) {
             this.logger.warn('IsActive | macro is undefined');
-            return false;
+            return { isActive: false };
         }
 
         const trigger = this.evaluateTrigger(macro);
@@ -83,7 +87,8 @@ export class MacroMarker {
             return trigger;
 
         const token = data?.token || (data?.entity?.markerType === 'Token' ? <Token>data.entity : undefined);
-        return this.getMarker(macro, token) || false;
+        const isActive = this.getMarker(macro, token) || false;
+        return { isActive };
     }
 
     public toggle(macro: Macro & Flaggable, data?: ToggleData): Promise<Flaggable> {
@@ -194,7 +199,7 @@ export class MacroMarker {
             });
     }
 
-    private evaluateTrigger(macro: Macro): boolean | null {
+    private evaluateTrigger(macro: Macro): { isActive: boolean, colour?: string } | null {
         const config = new MarkerConfigurationFlags(this.logger, macro).getData();
         const selectedToken = this.listControlledTokens()[0];
 
@@ -204,7 +209,10 @@ export class MacroMarker {
         const trigger = Function(`return function(token, actor, character) { ${config.trigger} }`)();
 
         try {
-            return !!trigger.call(macro, selectedToken, selectedToken?.actor, game.user.character);
+            const result = trigger.call(macro, selectedToken, selectedToken?.actor, game.user.character);
+            const isActive = !!result;
+            const colour = typeof result === 'string' ? result : undefined;
+            return { isActive, colour };
         } catch(error) {
             this.logger.error('Evaluate Trigger |', error);
             this.logger.info('Evaluate Trigger | Falling back to flags');

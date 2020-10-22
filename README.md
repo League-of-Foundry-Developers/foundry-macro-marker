@@ -64,6 +64,20 @@ if (!token)
 return actor.data.data.abilities.str.mod < 0;
 ```
 
+Alternatively, you can return a colour to dynamically colour your marker:
+```js
+if (!token)
+  return false;                   // marker deactivated
+
+const hp = actor.data.data.attributes.hp.value;
+const max = actor.data.data.attributes.hp.max;
+const ratio = (hp / max) * 100;
+
+if (ratio < 33) return "red";     // active marker with a red colour
+if (ratio < 67) return "#FF8000"; // active marker with an yellow colour
+return false;                     // marker deactivated
+```
+
 If using a trigger like the one above is not an option, you can use flags instead.
 
 ### Flag-based toggles
@@ -73,6 +87,9 @@ You can toggle the state on one of three entities:
 2. Token (or linked actor)
 3. User
 
+> **NB:** Flag-based toggles should only be used inside the actual macro, not inside the marker configuratio!
+
+
 #### Macro
 Toggling the state on the macro will make it visible for every user, irregardless of the token they have selected.
 
@@ -81,7 +98,7 @@ MacroMarker.toggle(macro);
 ```
 
 > **NB: `macro` is a variable pointing to a macro.** In general you can use `this` instead inside your own macros or you can toggle another macro by finding it in `game.macros`. For example `let macro = game.macros.getName('Toggle Rage');`.
-> The script macro then becomes this to toggle itself: 
+> The script macro then becomes this to toggle itself:
 > ```js
 > MacroMarker.toggle(this);
 > ```
@@ -111,6 +128,8 @@ MacroMarker.toggle(macro, { entity: user });
 
 ### Manual toggles
 Alternatively, you can manually activate and deactivate it, using the same function signature as the `toggle`  function.
+
+> **NB:** Manual toggles should only be used inside the actual macro, not inside the marker configuratio!
 
 ```js
 MacroMarker.activate(macro);
