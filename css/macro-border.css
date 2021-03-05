@@ -3,7 +3,8 @@
   --macro-marker-speed: 4s;
   --macro-marker-color: red;
 
-  --macro-marker-clip: calc(48px - var(--macro-marker-width));
+  --macro-marker-size: 48px;
+  --macro-marker-clip: calc(var(--macro-marker-size) - var(--macro-marker-width));
 }
 
 li.macro.macro-marker {
@@ -37,8 +38,8 @@ li.macro.macro-marker::before {
 }
 
 @keyframes snake {
-  0%, 100% {clip: rect(0px, 48px, var(--macro-marker-width), 0px); }
-  25% {clip: rect(0px, var(--macro-marker-width), 48px, 0px); }
-  50% {clip: rect(var(--macro-marker-clip), 48px, 48px, 0px); }
-  75% {clip: rect(0px, 48px, 48px, var(--macro-marker-clip)); }
+  0%, 100% {clip: rect(0px, var(--macro-marker-size), var(--macro-marker-width), 0px); }
+  25% {clip: rect(0px, var(--macro-marker-width), var(--macro-marker-size), 0px); }
+  50% {clip: rect(var(--macro-marker-clip), var(--macro-marker-size), var(--macro-marker-size), 0px); }
+  75% {clip: rect(0px, var(--macro-marker-size), var(--macro-marker-size), var(--macro-marker-clip)); }
 }
