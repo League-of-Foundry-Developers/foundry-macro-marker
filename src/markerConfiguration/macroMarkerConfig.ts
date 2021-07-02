@@ -73,7 +73,7 @@ export class MacroMarkerConfigTab {
         const tabs = new TabsV2({navSelector: '.tabs', contentSelector: '.tab-content', initial: 'macro', callback: () => { /* */ } });
         tabs.bind(formParent);
 
-        const iconInput = <HTMLInputElement>markerTab.querySelector('input[type="hidden"]');
+        const iconInput = <HTMLButtonElement>markerTab.querySelector('button[data-type="image"]');
         const iconImg = <HTMLImageElement>markerTab.querySelector('.sheet-header img');
         const fileBrowser = FilePicker.fromButton(iconInput, {});
         iconImg.addEventListener('click', () => {
