@@ -5,27 +5,37 @@
     "author": "Stan Janssen",
     "version": "1.0.6",
     "minimumCoreVersion": "0.6.0",
-    "compatibleCoreVersion":"0.7.9",
-    "scripts": ["macro-marker.js"],
-    "styles": ["css/macro-border.css", "css/macro-config.css"],
+    "compatibleCoreVersion": "0.7.9",
+    "scripts": [
+        "macro-marker.js"
+    ],
+    "styles": [
+        "css/macro-border.css",
+        "css/macro-config.css"
+    ],
     "manifest": "https://raw.githubusercontent.com/League-of-Foundry-Developers/foundry-macro-marker/master/module.json",
     "download": "https://github.com/League-of-Foundry-Developers/foundry-macro-marker/releases/download/v1.0.6/macro-marker.zip",
     "url": "https://github.com/janssen-io/foundry-macro-marker",
     "bugs": "https://github.com/janssen-io/foundry-macro-marker/issues",
     "languages": [
         {
-          "lang": "en",
-          "name": "English",
-          "path": "lang/en.json"
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        },
+        {
+            "lang": "cn",
+            "name": "中文",
+            "path": "lang/cn.json"
         }
     ],
     "packs": [
         {
-        "label": "Macro Marker Examples",
-        "entity": "Macro",
-        "name": "macro-marker-examples",
-        "path": "packs/macro-marker-examples.db",
-        "module": "macro-marker"
+            "label": "Macro Marker Examples",
+            "entity": "Macro",
+            "name": "macro-marker-examples",
+            "path": "packs/macro-marker-examples.db",
+            "module": "macro-marker"
         }
     ],
     "socket": true

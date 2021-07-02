@@ -1,0 +1,18 @@
+{
+    "macro-marker.navbar.macro": "宏", 
+    "macro-marker.navbar.marker": "标识",
+    "macro-marker.markerConfig.borderColour": "边框颜色",
+    "macro-marker.markerConfig.activateCondition": "激活情况",
+    "macro-marker.markerConfig.iconTooltip": "激活图标",
+    "macro-marker.markerConfig.nameTooltip": "激活文字提示",
+    
+    "macro-marker.settings.dimInactive.name": "未激活宏亮度",
+    "macro-marker.settings.dimInactive.hint": "令未激活的宏更黯淡。设置为 100 关闭此效果。",
+    "macro-marker.settings.defaultColour.name": "默认颜色",
+    "macro-marker.settings.defaultColour.hint": "激活宏的默认颜色。必须为有效的 CSS 颜色（例如 HEX, RGBA 或名称值）。",
+    "macro-marker.settings.borderWidth.name": "边框宽度",
+    "macro-marker.settings.borderWidth.hint": "激活的宏边框的宽度。",
+    "macro-marker.settings.animationSpeed.name": "动画速度",
+    "macro-marker.settings.animationSpeed.hint": "完成一整个动画所需的秒数。0 以关闭动画效果。"
+  }
+  
