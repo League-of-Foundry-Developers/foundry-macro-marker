@@ -1,16 +1,16 @@
 <header class="sheet-header">
-    <img src="{{ icon }}" data-edit="{{ module }}.icon" height="64" width="64" title="Active Icon">
+    <img src="{{ icon }}" data-edit="{{ module }}.icon" height="64" width="64" title="{{ localize 'macro-marker.markerConfig.iconTooltip' }}">
     <input type="hidden" name="{{ module }}.icon" value="{{ icon }}" data-target="{{ module }}.icon" data-type="image" />
-    <h1><input name="{{ module }}.tooltip" type="text" value="{{ tooltip }} " placeholder="Active Tooltip" title="Active Tooltip"></h1>
+    <h1><input name="{{ module }}.tooltip" type="text" value="{{ tooltip }} " placeholder="{{ localize 'macro-marker.markerConfig.nameTooltip' }}" title="{{ localize 'macro-marker.markerConfig.nameTooltip' }}"></h1>
 </header>
 
 <div class="form-group">
-    <label>Border colour:</label>
+    <label>{{ localize "macro-marker.markerConfig.borderColour" }}</label>
     <input type="color" name="{{ module }}.colour" value="{{ colour }}" />
 </div>
 
 <div class="form-group stacked command macro-marker-trigger">
-    <label>Activate marker when:</label>
+    <label>{{ localize "macro-marker.markerConfig.activateCondition" }}</label>
     <textarea name="{{ module }}.trigger">{{ trigger }}</textarea>
 </div>
 
