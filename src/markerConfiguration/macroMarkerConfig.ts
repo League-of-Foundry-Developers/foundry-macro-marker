@@ -39,12 +39,12 @@ export class MacroMarkerConfigTab {
         const macroNav = document.createElement('a');
         macroNav.classList.add('item', 'active');
         macroNav.setAttribute('data-tab', 'macro');
-        macroNav.text = 'Macro';
+        macroNav.text = game.i18n.localize('macro-marker.navbar.macro');
 
         const markerNav = document.createElement('a');
         markerNav.classList.add('item');
         markerNav.setAttribute('data-tab', CONSTANTS.module.name);
-        markerNav.text = 'Marker';
+        markerNav.text = game.i18n.localize('macro-marker.navbar.marker');;
 
         nav.append(macroNav, markerNav);
 
