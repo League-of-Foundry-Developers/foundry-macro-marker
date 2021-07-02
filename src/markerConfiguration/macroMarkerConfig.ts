@@ -39,12 +39,12 @@ export class MacroMarkerConfigTab {
         const macroNav = document.createElement('a');
         macroNav.classList.add('item', 'active');
         macroNav.setAttribute('data-tab', 'macro');
-        macroNav.text = 'Macro';
+        macroNav.text = game.i18n.localize('macro-marker.navbar.macro');
 
         const markerNav = document.createElement('a');
         markerNav.classList.add('item');
         markerNav.setAttribute('data-tab', CONSTANTS.module.name);
-        markerNav.text = 'Marker';
+        markerNav.text = game.i18n.localize('macro-marker.navbar.marker');;
 
         nav.append(macroNav, markerNav);
 
@@ -73,7 +73,7 @@ export class MacroMarkerConfigTab {
         const tabs = new TabsV2({navSelector: '.tabs', contentSelector: '.tab-content', initial: 'macro', callback: () => { /* */ } });
         tabs.bind(formParent);
 
-        const iconInput = <HTMLInputElement>markerTab.querySelector('input[type="hidden"]');
+        const iconInput = <HTMLButtonElement>markerTab.querySelector('button[data-type="image"]');
         const iconImg = <HTMLImageElement>markerTab.querySelector('.sheet-header img');
         const fileBrowser = FilePicker.fromButton(iconInput, {});
         iconImg.addEventListener('click', () => {

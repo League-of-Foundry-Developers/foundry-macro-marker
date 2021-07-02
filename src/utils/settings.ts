@@ -41,8 +41,8 @@ export class Settings {
 
 export function registerSettings(): void {
     game.settings.register(CONSTANTS.module.name, Settings.keys.dimInactiveMacros, {
-        name: 'Inactive macro brightness',
-        hint: 'Makes inactive macros on the hotbar less bright. Set to 100 to disable the effect.',
+        name: game.i18n.localize('macro-marker.settings.dimInactive.name'),
+        hint: game.i18n.localize('macro-marker.settings.dimInactive.hint'),
         scope: 'world',
         config: true,
         default: 65,
@@ -52,8 +52,8 @@ export function registerSettings(): void {
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.defaultColour, {
-        name: 'Default colour',
-        hint: 'The default colour for active macros. Must be a valid CSS colour (e.g. hex, rgba or named).',
+        name: game.i18n.localize('macro-marker.settings.defaultColour.name'),
+        hint: game.i18n.localize('macro-marker.settings.defaultColour.hint'),
         scope: 'world',
         config: true,
         default: '#ff0000',
@@ -65,8 +65,8 @@ export function registerSettings(): void {
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.borderWidth, {
-        name: 'Border width',
-        hint: 'The width for the active macro border.',
+        name: game.i18n.localize('macro-marker.settings.borderWidth.name'),
+        hint: game.i18n.localize('macro-marker.settings.borderWidth.hint'),
         scope: 'world',
         config: true,
         default: 2,
@@ -76,8 +76,8 @@ export function registerSettings(): void {
     });
 
     game.settings.register(CONSTANTS.module.name, Settings.keys.animationSpeed, {
-        name: 'Animation speed',
-        hint: 'The number of second it takes to complete a single animation. Use 0 to turn off animations.',
+        name: game.i18n.localize('macro-marker.settings.animationSpeed.name'),
+        hint: game.i18n.localize('macro-marker.settings.animationSpeed.hint'),
         scope: 'client',
         config: true,
         default: 3,

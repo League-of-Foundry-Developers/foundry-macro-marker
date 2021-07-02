@@ -1,0 +1,17 @@
+{
+  "macro-marker.navbar.macro": "Macro", 
+  "macro-marker.navbar.marker": "Marker",
+  "macro-marker.markerConfig.borderColour": "Border colour:",
+  "macro-marker.markerConfig.activateCondition": "Activate marker when:",
+  "macro-marker.markerConfig.iconTooltip": "Active Icon",
+  "macro-marker.markerConfig.nameTooltip": "Active Tooltip",
+  
+  "macro-marker.settings.dimInactive.name": "Inactive macro brightness",
+  "macro-marker.settings.dimInactive.hint": "Makes inactive macros on the hotbar less bright. Set to 100 to disable the effect.",
+  "macro-marker.settings.defaultColour.name": "Default colour",
+  "macro-marker.settings.defaultColour.hint": "The default colour for active macros. Must be a valid CSS colour (e.g. hex, rgba or named).",
+  "macro-marker.settings.borderWidth.name": "Border width",
+  "macro-marker.settings.borderWidth.hint": "The width for the active macro border.",
+  "macro-marker.settings.animationSpeed.name": "Animation speed",
+  "macro-marker.settings.animationSpeed.hint": "The number of second it takes to complete a single animation. Use 0 to turn off animations."
+}
