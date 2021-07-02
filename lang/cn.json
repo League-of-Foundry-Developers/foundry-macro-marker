@@ -14,5 +14,5 @@
     "macro-marker.settings.borderWidth.hint": "激活的宏边框的宽度。",
     "macro-marker.settings.animationSpeed.name": "动画速度",
     "macro-marker.settings.animationSpeed.hint": "完成一整个动画所需的秒数。0 以关闭动画效果。"
-  }
+}
   
