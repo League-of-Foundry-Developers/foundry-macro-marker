@@ -9,7 +9,7 @@ import CONSTANTS from './utils/constants';
 
 export function renderMarkers(hotbar: HTMLElement): boolean {
     const logger = new NotifiedLogger(new ConsoleLogger());
-    const token: Token & Flaggable | undefined = canvas.tokens.controlled[0];
+    const token: Token & Flaggable | undefined = canvas.tokens.controlled ? canvas.tokens.controlled[0] : undefined;
     const hotbarMarker = new MarkerToggler(
         game.macros,
         logger,
