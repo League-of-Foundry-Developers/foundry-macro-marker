@@ -18,6 +18,10 @@ export function renderMarkers(hotbar: HTMLElement): boolean {
 
     hotbarMarker.showMarkers(hotbar, token);
 
+    const hotbarHeight = $(hotbar).find('li.macro').first().height();
+    if (hotbarHeight)
+        document.documentElement.style.setProperty('--macro-marker-size', `${hotbarHeight}px`);
+
     return true;
 }
 export function renderHotbars(): boolean {
