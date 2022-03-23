@@ -182,7 +182,7 @@ export class MacroMarker {
         const existingMarker: boolean | undefined = flags.getMarkers().markers[flaggable.id];
 
         // TODO: extract condition if it needs to be testable
-        if (macro.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OWNER))
+        if (macro.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OWNER))
             return flags.addMarker(flaggable, !existingMarker)
                 .then(updatedFlaggable => {
                     Hooks.callAll(CONSTANTS.hooks.markerUpdated, macro, flags.getMarkers()[macro.id]);

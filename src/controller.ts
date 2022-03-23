@@ -60,7 +60,7 @@ export function delayCallback(callback: (...args: unknown[]) => boolean, ...args
     if (timers[callback.name])
         window.clearTimeout(timers[callback.name]);
 
-    timers[callback.name] = window.setTimeout(() => callback(...args), 100);
+    timers[callback.name] = window.setTimeout(() => callback(...args), 500);
 }
 
 export async function removeTokenFlags(id: string): Promise<void> {
