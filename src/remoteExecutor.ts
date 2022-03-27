@@ -53,7 +53,7 @@ export class RemoteExecutor {
     // TODO: rip out direct references to `game`?
     static create(logger: Logger): RemoteExecutor {
         if (!RemoteExecutor._instance)
-            RemoteExecutor._instance = new RemoteExecutor(logger, <FoundrySocket><unknown>game.socket, game.user, game.users.entities);
+            RemoteExecutor._instance = new RemoteExecutor(logger, <FoundrySocket><unknown>game.socket, game.user, game.users.contents);
 
         return RemoteExecutor._instance;
     }

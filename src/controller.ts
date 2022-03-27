@@ -64,7 +64,7 @@ export function delayCallback(callback: (...args: unknown[]) => boolean, ...args
 }
 
 export async function removeTokenFlags(id: string): Promise<void> {
-    for(const macro of game.macros.entities) {
+    for(const macro of game.macros.contents) {
         const flags = new MacroMarkerFlags(new ConsoleLogger(), macro);
         const markers = flags.getMarkers();
         if (!(id in markers.markers))
