@@ -8,7 +8,7 @@ import { MarkerConfiguration } from './markerConfiguration';
 export class MacroMarkerConfigTab {
     public static init(): void {
         Hooks.on('renderMacroConfig', (_, jhtml, data) => { 
-            const macro = game.macros.get(data.entity._id);
+            const macro = game.macros.get(data.document.id);
             const dialog: HTMLElement = jhtml[0];
             const formParent = dialog.tagName.toLowerCase() === 'form' ? dialog.parentElement : dialog;
             if (formParent)

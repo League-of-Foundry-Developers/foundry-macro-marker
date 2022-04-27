@@ -60,11 +60,11 @@ export function delayCallback(callback: (...args: unknown[]) => boolean, ...args
     if (timers[callback.name])
         window.clearTimeout(timers[callback.name]);
 
-    timers[callback.name] = window.setTimeout(() => callback(...args), 100);
+    timers[callback.name] = window.setTimeout(() => callback(...args), 500);
 }
 
 export async function removeTokenFlags(id: string): Promise<void> {
-    for(const macro of game.macros.entities) {
+    for(const macro of game.macros.contents) {
         const flags = new MacroMarkerFlags(new ConsoleLogger(), macro);
         const markers = flags.getMarkers();
         if (!(id in markers.markers))
